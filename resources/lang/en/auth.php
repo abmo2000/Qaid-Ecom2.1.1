@@ -1,0 +1,31 @@
+<?php
+
+return [
+'register' => 'Create Account',
+'email' => 'Email Address',
+'phone' => 'Mobile Number',
+'address' => 'Address',
+'name' => 'Name',
+'pass' => 'Password',
+'confirm_password' => 'Confirm Password',
+'login' => 'Login',
+'name-placeholder' => 'Enter your name (e.g. Ahmed Mohamed)',
+'email-placeholder' => 'Enter your email (e.g. email@example.com)',
+'phone-placeholder' => 'Enter your mobile number (e.g. 112395511)',
+'address-placeholder' => 'Enter your address',
+'password-placeholder' => 'Enter Your Password',
+'confirm-password-placeholder' => 'Confirm Your Password',
+'have-account' => "Already have an account?",
+'continue-with' => 'Or continue with',
+'google' => 'Google',
+'message' => 'Message',
+ 'message-placeholder' => 'Enter A Message ...',
+ 'city' => "City",
+ 'city-placeholder' => 'Choose City',
+ 'signing_in' => 'Signing In...',
+ 'sign_up' => 'Sign Up',
+ 'login_success' => 'Signed in successfully!',
+ 'sign_in' => "Sign In",
+  'register_success' => 'You Registered successfully',
+
+];

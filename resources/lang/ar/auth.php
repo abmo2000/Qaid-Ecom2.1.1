@@ -1,0 +1,32 @@
+<?php
+
+return[
+ 'register' => 'تسجيل حساب',
+ 'email' => 'البريد الالكتروني',
+ 'phone' => 'رقم المحمول',
+ 'address' => 'العنوان',
+ 'name' => 'الاسم',
+ 'pass' => 'كلمة السر',
+ 'confirm_password' => 'تأكيد كلمة السر',
+ 'login' => 'تسجيل الدخول',
+ 'name-placeholder' => 'ادخل اسمك مثال : احمد محمد',
+ 'email-placeholder' => 'ادخل بريدك الالكتروني مثال: email@examlple.com',
+ 'phone-placeholder' => 'ادخل هاتف المحمول مثال: 112395511',
+ 'address-placeholder' => 'ادخل العنوان',
+ 'password-placeholder' => 'أدخل كلمة المرور',
+'confirm-password-placeholder' => 'تأكيد كلمة المرور',
+'have-account' => 'لديك حساب ؟',
+'continue-with' => 'او سجل بواسطة',
+ 'google' => 'جوجل',
+ 'message' => 'رسالة',
+ 'message-placeholder' => 'ادخل الرسالة', 
+ 'city' => 'المحافظة',
+ 'city-placeholder' => 'اختر المحافظة',
+ 'signing_in' => 'يتم تسجيل الدخول ...',
+ 'sign_up' => 'انشاء حساب',
+ 'login_success' => 'تم تسجيل الدخول بنجاح !!',
+ 'sign_in' => "تسجيل الدخول",
+ 'register_success' => 'تم انشاء الحساب بنجاح',
+     'shop.specs' => 'الكمية المتاحة',
+
+];

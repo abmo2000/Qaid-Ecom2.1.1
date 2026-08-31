@@ -1,0 +1,2 @@
+en_name,ar_name,en_description,ar_description,price,capacity,stock,brand,category_name,in_stock,featured,has_sale,sale_price,has_trial,trial_price,trial_capacity,routines
+"Sample Product","منتج تجريبي","English description","Arabic description",99.99,10,50,"Sample Brand","Sample Category",yes,no,no,,no,,,

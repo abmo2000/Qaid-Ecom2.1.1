@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'products' => 'المنتجات',
+    'discover-products' => 'اكتشف منتجاتنا',
+    'filters' => 'الفلاتر',
+    'routine' => 'روتين - الشعر',
+    'categories' => 'فئات',
+    'of' => 'من',
+    'showing' => 'اظهار',
+    'sale' => 'خصم',
+    'trial' => 'عينات',
+    'packages' => 'مجموعات',
+    'reset_filters' => 'مسح الفلاتر',
+    'search_products' => 'ابحث عن المنتجات',
+    'addtocart' => 'اضف الي السلة',
+    'quantity' => 'الكمية',
+    'package_includes' => 'هذه المجموعه تضمن',
+    'desc' => 'الوصف',
+    'brand' => 'البراند',
+    'stock_available' => 'المخزون المتاح: :count',
+    'unlimited_stock' => 'مخزون غير محدود',
+    'out_of_stock' => 'غير متوفر',
+    'realted_products' => 'المنتجات ذات الصلة',
+    'products_includes' => 'يتضمن منتجات', 
+    'specs' => 'STOK',
+    'buynow' => 'اشتري الآن',
+];
