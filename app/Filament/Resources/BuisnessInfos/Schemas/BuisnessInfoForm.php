@@ -76,6 +76,24 @@ class BuisnessInfoForm
                         })
                         ->maxLength(255),
 
+                TextInput::make('telegram_link')
+                    ->label('Telegram Link')
+                    ->placeholder('t.me/yourchannel or @username')
+                    ->afterStateHydrated(function ($state, callable $set, $record) {
+                        if ($record) {
+                            $arTranslation = $record->translations()->where('locale', 'en')->first();
+
+                            if ($arTranslation?->value) {
+                                $decodedValue = self::decodeTranslation($arTranslation);
+                                $description = $decodedValue['telegram_link'] ?? '';
+                                $set('telegram_link', $description ?: '');
+                            } else {
+                                $set('telegram_link', '');
+                            }
+                        }
+                    })
+                    ->maxLength(255),
+
                 TextInput::make('whatsapp_number')
                     ->label('WhatsApp Number')
                     ->tel()

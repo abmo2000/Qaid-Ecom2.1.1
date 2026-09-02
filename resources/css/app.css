@@ -1,7 +1,10 @@
 @import 'tailwindcss';
 @import '@fortawesome/fontawesome-free/css/all.css';
 @import 'intl-tel-input/build/css/intlTelInput.css';
+@import 'tailwindcss';
 
+@import '@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '@fortawesome/fontawesome-free/css/brands.css';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -52,6 +55,34 @@
     .app-body {
         @apply bg-black;
         transition: filter 0.25s ease;
+    }
+
+    .whatsapp-float,
+    .telegram-float {
+        right: 1.25rem !important;
+        bottom: 1.25rem !important;
+        left: auto !important;
+        top: auto !important;
+        z-index: 50 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 58px !important;
+        height: 58px !important;
+        border-radius: 9999px !important;
+        border: 3px solid rgba(255, 255, 255, 0.9) !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
+    .whatsapp-float {
+        background: #25d366 !important;
+        box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45) !important;
+    }
+
+    .telegram-float {
+        background: #229ed9 !important;
+        box-shadow: 0 12px 30px rgba(34, 158, 217, 0.45) !important;
     }
 
     html.theme-light {
