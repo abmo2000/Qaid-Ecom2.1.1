@@ -65,6 +65,7 @@
                 <a href="{{ route('home') }}" class="nav-link">{{ trans('navbar.home') }}</a>
                 <a href="{{ route('shop') }}" class="nav-link">{{ trans('navbar.shop') }}</a>
                 <a href="{{ route('contact') }}" class="nav-link">{{ trans('navbar.contact') }}</a>
+                <a href="{{ route('wholesale-sales') }}" class="nav-link">{{ trans('wholesale.title') }}</a>
 
                 @if(Request::is('/'))
                     <a href="#fearured-products" @click.prevent="scrollToSection('fearured-products')" class="nav-link cursor-pointer">

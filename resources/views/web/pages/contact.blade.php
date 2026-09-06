@@ -9,7 +9,7 @@ Contact
 <x-navbar></x-navbar>
 
 <!-- Background Image Section -->
-<section class="relative py-16 md:py-24 min-h-screen overflow-hidden bg-[#0d1b2a]">
+<section class="relative min-h-screen overflow-hidden bg-[#0d1b2a] pb-16 pt-32 sm:pt-36 md:pb-24 md:pt-40 lg:pt-44">
     <!-- Background Video with Overlay -->
     <div class="absolute right-0 left-0 top-0 h-full w-full">
         <video

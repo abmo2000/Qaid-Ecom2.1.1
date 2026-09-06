@@ -8,7 +8,7 @@ Terms & Conditions
 
 <x-navbar></x-navbar>
 
-<section class="py-16 md:py-24 bg-black min-h-screen">
+<section class="min-h-screen bg-black pb-16 pt-32 sm:pt-36 md:pb-24 md:pt-40 lg:pt-44">
     <div class="container mx-auto px-4">
         <div class="max-w-6xl mx-auto text-gray-100">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-8 text-center">{{ trans('terms.title', [], app()->getLocale()) ?: 'Terms & Conditions' }}</h1>

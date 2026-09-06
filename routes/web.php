@@ -20,6 +20,7 @@ use App\Http\Controllers\Web\BuyerOrderController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\TermsController;
 use App\Http\Controllers\Web\Auth\GoogleAuthController;
+use App\Http\Controllers\Web\WholesaleController;
 
 Route::middleware(['locale'])->group(function(){
      Route::get('/', HomeController::class)->name('home');
@@ -57,6 +58,8 @@ Route::middleware(['locale'])->group(function(){
           ->name('orders.invoice');
 
      Route::get('terms', TermsController::class)->name('terms');
+     Route::get('wholesale-sales', [WholesaleController::class, 'index'])->name('wholesale-sales');
+     Route::post('wholesale-sales/price-quote', [WholesaleController::class, 'download'])->name('wholesale-sales.price-quote');
 });
 
 Route::get('locale/{locale}' , LocaleController::class)->name('lang-switch');
