@@ -1,6 +1,6 @@
 <div align="center">
 
-# Qaid Store
+# steel unnamed project | Formal Qaideg.com
 
 **A modern, full-featured e-commerce platform built with Laravel 12**
 
@@ -542,6 +542,3 @@ For new workflows, test both English and Arabic requests, validation failures, f
 - Keep export/reporting logic isolated in dedicated export classes.
 - Continue validating new workflows with feature tests before deployment.
 
-## License
-
-This project is licensed under the MIT License.
