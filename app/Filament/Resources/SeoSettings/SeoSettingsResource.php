@@ -68,6 +68,6 @@ class SeoSettingsResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('key', 'seo-settings');
+            ->where('key', 'like', 'seo-page-%');
     }
 }

@@ -40,7 +40,7 @@ class Product extends Model implements Translatable , Cartable
         'in_stock' => 'boolean',
     ];
 
-    public $translatedAttributes = ['name' , 'description' , 'meta_title' , 'meta_description'];
+    public $translatedAttributes = ['name' , 'description' , 'meta_title' , 'meta_description', 'meta_keywords'];
      public $translationModel = \App\Models\Translations\ProductTranslation::class;
     public function routines():BelongsToMany{
         return $this->belongsToMany(Routine::class , 'products_routines');

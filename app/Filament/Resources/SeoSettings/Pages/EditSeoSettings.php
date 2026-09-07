@@ -10,37 +10,22 @@ class EditSeoSettings extends EditRecord
 {
     protected static string $resource = SeoSettingsResource::class;
 
+    protected array $translations = [];
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Load translations into form
         $data['en'] = $this->record->translate('en')?->toArray() ?? [];
         $data['ar'] = $this->record->translate('ar')?->toArray() ?? [];
-
-        // Parse JSON values into fields
-        foreach (['en', 'ar'] as $locale) {
-            if (isset($data[$locale]['value']) && is_string($data[$locale]['value'])) {
-                $decoded = json_decode($data[$locale]['value'], true);
-                if (is_array($decoded)) {
-                    $data[$locale] = array_merge($data[$locale], $decoded);
-                }
-            }
-        }
 
         return $data;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        // Convert form data to JSON for translation storage
         foreach (['en', 'ar'] as $locale) {
             if (isset($data[$locale])) {
-                $localeData = [
-                    'meta_title' => $data[$locale]['meta_title'] ?? '',
-                    'meta_description' => $data[$locale]['meta_description'] ?? '',
-                    'meta_keywords' => $data[$locale]['meta_keywords'] ?? '',
-                ];
-                $data[$locale] = ['value' => json_encode($localeData)];
-                unset($data[$locale . '_meta_title'], $data[$locale . '_meta_description'], $data[$locale . '_meta_keywords']);
+                $this->translations[$locale] = $data[$locale];
+                unset($data[$locale]);
             }
         }
 
@@ -49,21 +34,9 @@ class EditSeoSettings extends EditRecord
 
     protected function afterSave(): void
     {
-        // Save translations
-        $requestData = request()->validate([
-            'data' => 'array',
-        ])['data'] ?? [];
-
-        foreach (['en', 'ar'] as $locale) {
-            if (isset($requestData[$locale])) {
-                $localeData = [
-                    'meta_title' => $requestData[$locale]['meta_title'] ?? '',
-                    'meta_description' => $requestData[$locale]['meta_description'] ?? '',
-                    'meta_keywords' => $requestData[$locale]['meta_keywords'] ?? '',
-                ];
-                $this->record->translateOrNew($locale)->value = json_encode($localeData);
-                $this->record->translateOrNew($locale)->save();
-            }
+        foreach ($this->translations as $locale => $translation) {
+            $translation['value'] = $this->record->translate($locale)?->value ?? [];
+            $this->record->translateOrNew($locale)->fill($translation)->save();
         }
 
         Notification::make()

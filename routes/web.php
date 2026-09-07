@@ -59,7 +59,8 @@ Route::middleware(['locale'])->group(function(){
 
      Route::get('terms', TermsController::class)->name('terms');
      Route::get('wholesale-sales', [WholesaleController::class, 'index'])->name('wholesale-sales');
-     Route::post('wholesale-sales/price-quote', [WholesaleController::class, 'download'])->name('wholesale-sales.price-quote');
+     Route::post('wholesale-sales/price-quote', [WholesaleController::class, 'submit'])->name('wholesale-sales.price-quote');
+     Route::get('wholesale-sales/price-quote/download', [WholesaleController::class, 'downloadQuote'])->name('wholesale-sales.quote-download');
 });
 
 Route::get('locale/{locale}' , LocaleController::class)->name('lang-switch');

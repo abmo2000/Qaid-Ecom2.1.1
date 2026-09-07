@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CitySeeder::class,
+            SeoSettingsSeeder::class,
         ]);
     }
 }

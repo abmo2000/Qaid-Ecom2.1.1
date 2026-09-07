@@ -19,6 +19,9 @@ Terms & Conditions
                 @else
                     <p>{{ trans('terms.missing', [], app()->getLocale()) ?? 'Terms and conditions content is not available yet. Please check back later.' }}</p>
                 @endif
+                <p class="mt-8 border-t border-white/10 pt-6 text-sm text-gray-400">
+                    {{ trans('privacy.wholesale_device_data') }}
+                </p>
             </div>
         </div>
     </div>

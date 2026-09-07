@@ -12,9 +12,15 @@
         $seoDescription =
             $baseProduct->meta_description ?:
             \Illuminate\Support\Str::limit(strip_tags($baseProduct->description ?? ''), 160);
+        $seoKeywords = $baseProduct->meta_keywords ?: implode(', ', array_filter([
+            $baseProduct->name,
+            $baseProduct->category?->title,
+            $baseProduct->brand,
+        ]));
         $seoImage = $baseProduct->image ? storage_image_url($baseProduct->image) : null;
     @endphp
     <meta name="description" content="{{ $seoDescription }}">
+    <meta name="keywords" content="{{ $seoKeywords }}">
     <meta name="robots" content="index, follow">
     <meta property="og:type" content="product">
     <meta property="og:title" content="{{ $seoTitle }}">

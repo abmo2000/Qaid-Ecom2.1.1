@@ -2,10 +2,43 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
 >
     <head>
+        @php
+            $seoPageByRoute = [
+                'home' => 'home',
+                'shop' => 'shop',
+                'contact' => 'contact',
+                'wholesale-sales' => 'wholesale-sales',
+                'terms' => 'terms',
+                'routines.index' => 'routines',
+                'routines.show' => 'routines',
+                'packages.show' => 'packages',
+            ];
+            $seo = isset($seoData)
+                ? $seoData
+                : (isset($seoPageByRoute[request()->route()?->getName()])
+                    ? getPageSeo($seoPageByRoute[request()->route()->getName()])
+                    : null);
+            $pageTitle = $seo['meta_title'] ?? trim($__env->yieldContent('title')) ?: config('app.name');
+        @endphp
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Laravel') }} | @yield('title')</title>
+        <title>{{ $pageTitle }}</title>
+
+        @if ($seo)
+            <meta name="description" content="{{ $seo['meta_description'] ?? '' }}">
+            @if (!empty($seo['meta_keywords']))
+                <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
+            @endif
+            <meta name="robots" content="index, follow">
+            <meta property="og:type" content="website">
+            <meta property="og:title" content="{{ $pageTitle }}">
+            <meta property="og:description" content="{{ $seo['meta_description'] ?? '' }}">
+            <meta property="og:url" content="{{ request()->url() }}">
+            <meta name="twitter:card" content="summary">
+            <meta name="twitter:title" content="{{ $pageTitle }}">
+            <meta name="twitter:description" content="{{ $seo['meta_description'] ?? '' }}">
+        @endif
 
         @stack('meta')
         <link rel="preconnect" href="https://fonts.bunny.net">

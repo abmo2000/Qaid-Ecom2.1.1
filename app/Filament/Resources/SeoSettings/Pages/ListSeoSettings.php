@@ -4,7 +4,6 @@ namespace App\Filament\Resources\SeoSettings\Pages;
 
 use App\Filament\Resources\SeoSettings\SeoSettingsResource;
 use App\Models\BuisnessSetting;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSeoSettings extends ListRecords
@@ -13,14 +12,7 @@ class ListSeoSettings extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make()
-                ->using(function (array $data) {
-                    return BuisnessSetting::create([
-                        'key' => 'seo-settings',
-                    ]);
-                }),
-        ];
+        return [];
     }
 
     public function mount(): void
@@ -28,8 +20,8 @@ class ListSeoSettings extends ListRecords
         parent::mount();
         
         // Create default record if it doesn't exist
-        if (!BuisnessSetting::where('key', 'seo-settings')->exists()) {
-            BuisnessSetting::create(['key' => 'seo-settings']);
+        foreach (['home', 'shop', 'contact', 'wholesale-sales', 'terms', 'routines', 'packages'] as $page) {
+            BuisnessSetting::firstOrCreate(['key' => 'seo-page-' . $page]);
         }
     }
 }

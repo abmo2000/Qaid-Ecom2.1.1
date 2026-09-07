@@ -34,6 +34,20 @@ if (!function_exists('getBuisnessSettings')) {
 
 }
 
+if (!function_exists('getPageSeo')) {
+    function getPageSeo(string $page, array $defaults = []): array
+    {
+        $setting = BuisnessSetting::query()->where('key', 'seo-page-' . $page)->first();
+        $translation = $setting?->translate(app()->getLocale());
+
+        return [
+            'meta_title' => $translation?->meta_title ?: ($defaults['meta_title'] ?? config('app.name')),
+            'meta_description' => $translation?->meta_description ?: ($defaults['meta_description'] ?? ''),
+            'meta_keywords' => $translation?->meta_keywords ?: ($defaults['meta_keywords'] ?? ''),
+        ];
+    }
+}
+
 if(!function_exists('getCities')){
   
     function getCities(){

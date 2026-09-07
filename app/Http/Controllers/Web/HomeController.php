@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\BuisnessSetting;
 
 class HomeController extends Controller
 {
@@ -61,25 +60,10 @@ class HomeController extends Controller
       ->filter(fn (array $section) => $section['products']->isNotEmpty())
       ->values();
 
-    // Fetch SEO settings
-    $seoSetting = BuisnessSetting::where('key', 'seo-settings')->first();
-    $seoData = [
-      'meta_title' => null,
-      'meta_description' => null,
-      'meta_keywords' => null,
-    ];
-
-    if ($seoSetting) {
-      $localeTranslation = $seoSetting->translate(app()->getLocale());
-      if ($localeTranslation?->value) {
-        $decodedValue = json_decode($localeTranslation->value, true);
-        $seoData = [
-          'meta_title' => $decodedValue['meta_title'] ?? null,
-          'meta_description' => $decodedValue['meta_description'] ?? null,
-          'meta_keywords' => $decodedValue['meta_keywords'] ?? null,
-        ];
-      }
-    }
+    $seoData = getPageSeo('home', [
+      'meta_title' => config('app.name'),
+      'meta_description' => 'Discover amazing products and great deals on our online store.',
+    ]);
 
     return view('web.pages.home')->with([
       'categories' => $categories,

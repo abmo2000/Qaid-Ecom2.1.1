@@ -11,7 +11,7 @@ class BuisnessSetting extends Model implements Translatable
     use AstrotomicTranslatable;
     protected $guarded = [ 'id' , 'created_at' , 'updated_at'];
 
-     public $translatedAttributes = ['value'];
+    public $translatedAttributes = ['value', 'meta_title', 'meta_description', 'meta_keywords'];
 
      public $translationModel = \App\Models\Translations\BuisnessSettingTranslation::class;
 

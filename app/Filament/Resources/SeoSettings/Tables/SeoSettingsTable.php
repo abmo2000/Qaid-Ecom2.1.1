@@ -13,10 +13,16 @@ class SeoSettingsTable
         return $table
             ->columns([
                 TextColumn::make('key')
-                    ->label('Setting Type')
+                    ->label('Page')
                     ->searchable()
                     ->formatStateUsing(fn ($state) => match($state) {
-                        'seo-settings' => '🏠 Home Page SEO',
+                        'seo-page-home' => 'Home Page',
+                        'seo-page-shop' => 'Shop Page',
+                        'seo-page-contact' => 'Contact Page',
+                        'seo-page-wholesale-sales' => 'Wholesale Sales Page',
+                        'seo-page-terms' => 'Terms Page',
+                        'seo-page-routines' => 'Routines Page',
+                        'seo-page-packages' => 'Packages Page',
                         default => ucfirst(str_replace('-', ' ', $state ?? 'Unknown')),
                     })
                     ->sortable(),

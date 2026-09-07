@@ -5,18 +5,6 @@
 @endsection
 
 @push('meta')
-    <meta name="description" content="{{ $seoData['meta_description'] ?: 'Welcome to our e-commerce store' }}">
-    @if ($seoData['meta_keywords'])
-        <meta name="keywords" content="{{ $seoData['meta_keywords'] }}">
-    @endif
-    <meta name="robots" content="index, follow">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ $seoData['meta_title'] ?: config('app.name') }}">
-    <meta property="og:description" content="{{ $seoData['meta_description'] ?: 'Welcome to our e-commerce store' }}">
-    <meta property="og:url" content="{{ request()->url() }}">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{{ $seoData['meta_title'] ?: config('app.name') }}">
-    <meta name="twitter:description" content="{{ $seoData['meta_description'] ?: 'Welcome to our e-commerce store' }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 @endpush
 

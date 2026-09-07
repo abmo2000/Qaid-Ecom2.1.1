@@ -41,6 +41,13 @@
 
             <x-errors></x-errors>
 
+            @if (session('success'))
+                <div id="wholesale-success" class="mb-6 rounded-2xl border border-emerald-300/40 bg-emerald-500/15 p-4 text-sm font-semibold text-emerald-100" role="status">
+                    {{ session('success') }}
+                </div>
+                <div id="wholesale-download-error" class="mb-6 hidden rounded-2xl border border-red-300/40 bg-red-500/15 p-4 text-sm font-semibold text-red-100" role="alert"></div>
+            @endif
+
             <form action="{{ route('wholesale-sales.price-quote') }}" method="POST" class="space-y-7">
                 @csrf
 
@@ -52,7 +59,8 @@
 
                     <div>
                         <label for="phone" class="mb-2 block text-sm font-bold uppercase tracking-wide text-white/80">{{ trans('wholesale.phone') }} <span class="text-[#f7d879]" aria-hidden="true">*</span></label>
-                        <input id="phone" name="phone" value="{{ old('phone') }}" required maxlength="30" type="tel" pattern="[0-9+()\s-]{7,30}" autocomplete="tel" class="w-full rounded-xl border border-[#d8b35a]/30 bg-[#0d1b2a]/90 px-4 py-3.5 text-white transition placeholder:text-white/30 focus:border-[#d8b35a] focus:outline-none focus:ring-2 focus:ring-[#d8b35a]/30" aria-required="true">
+                        <input id="phone" name="phone" value="{{ old('phone') }}" required maxlength="14" minlength="11" type="tel" inputmode="tel" pattern="(?:01[0125][0-9]{8}|(?:\+20|0020)1[0125][0-9]{8})" autocomplete="tel" class="w-full rounded-xl border border-[#d8b35a]/30 bg-[#0d1b2a]/90 px-4 py-3.5 text-white transition placeholder:text-white/30 focus:border-[#d8b35a] focus:outline-none focus:ring-2 focus:ring-[#d8b35a]/30" aria-required="true" aria-describedby="phone-error">
+                        <p id="phone-error" class="mt-2 hidden text-sm font-semibold text-red-300" role="alert"></p>
                     </div>
                 </div>
 
@@ -76,4 +84,71 @@
         </div>
     </div>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const phone = document.getElementById('phone');
+        const phoneError = document.getElementById('phone-error');
+        const phoneMessage = @json(trans('wholesale.phone_invalid'));
+        const phonePattern = /^(?:01[0125][0-9]{8}|(?:\+20|0020)1[0125][0-9]{8})$/;
+
+        if (!phone || !phoneError) {
+            return;
+        }
+
+        const validatePhone = () => {
+            const valid = phonePattern.test(phone.value);
+            const showError = phone.value.length > 0 && !valid;
+
+            phone.setCustomValidity(showError ? phoneMessage : '');
+            phoneError.textContent = showError ? phoneMessage : '';
+            phoneError.classList.toggle('hidden', !showError);
+            phone.classList.toggle('border-red-400', showError);
+
+            return valid;
+        };
+
+        phone.addEventListener('input', validatePhone);
+        phone.addEventListener('blur', validatePhone);
+        phone.form?.addEventListener('submit', (event) => {
+            if (!validatePhone()) {
+                event.preventDefault();
+                phone.reportValidity();
+                phone.focus();
+            }
+        });
+    });
+</script>
+@if (session('wholesale_download_url'))
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const success = document.getElementById('wholesale-success');
+            const error = document.getElementById('wholesale-download-error');
+
+            try {
+                const response = await fetch(@json(session('wholesale_download_url')), {
+                    headers: { 'Accept': 'application/pdf' },
+                });
+
+                if (!response.ok) {
+                    throw new Error('download_failed');
+                }
+
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'price-quote.pdf';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(link.href);
+            } catch (downloadError) {
+                success?.remove();
+                if (error) {
+                    error.textContent = @json(trans('wholesale.download_failed'));
+                    error.classList.remove('hidden');
+                }
+            }
+        });
+    </script>
+@endif
 @endsection

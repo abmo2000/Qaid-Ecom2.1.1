@@ -59,6 +59,12 @@ class ProductForm
                                                 ->maxLength(160)
                                                 ->placeholder('Brief summary shown in search results (max 160 chars)')
                                                 ->helperText('Leave blank to use the product description'),
+
+                                            TextInput::make('en.meta_keywords')
+                                                ->label('Meta Keywords / Tags (EN)')
+                                                ->maxLength(255)
+                                                ->placeholder('keyword, keyword, keyword')
+                                                ->helperText('Optional. Leave blank to generate keywords from the product name and category.'),
                                         ]),
                                 ]),
 
@@ -98,6 +104,13 @@ class ProductForm
                                                 ->placeholder('وصف مختصر يظهر في نتائج البحث (160 حرف كحد أقصى)')
                                                 ->extraAttributes(['dir' => 'rtl'])
                                                 ->helperText('اتركه فارغاً لاستخدام وصف المنتج'),
+
+                                            TextInput::make('ar.meta_keywords')
+                                                ->label('Meta Keywords / Tags (AR)')
+                                                ->maxLength(255)
+                                                ->placeholder('كلمة، كلمة، كلمة')
+                                                ->extraAttributes(['dir' => 'rtl', 'style' => 'text-align:right;'])
+                                                ->helperText('اختياري. اتركه فارغاً لإنشاء كلمات من اسم المنتج والتصنيف.'),
                                         ]),
                                 ]),
                             ])->columnSpanFull(),
