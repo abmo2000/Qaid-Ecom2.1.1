@@ -14,7 +14,6 @@ Months of scientific research and testing have enabled us to develop the ideal f
 'discover-natura' => 'Discover Natura Capelli',
 'featured-products' => 'Featured Products',
 'discover-products' => 'Discover our Products',
-'hydrate-&-nourish-your-hair' => 'Hydrate & nourish your hair',
 'we-support-your-choice' => 'We support your choice',
 
 ];

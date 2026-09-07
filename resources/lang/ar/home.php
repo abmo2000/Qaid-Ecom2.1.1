@@ -14,7 +14,6 @@ return [
 'discover-natura' => 'اكتشف ناتورا كابيلي',
 'featured-products' => 'المنتجات المميزة',
 'discover-products' => 'اكتشف منتجانتا',
-'hydrate-&-nourish-your-hair' => 'ترطيب و تغذية لشعرك',
 'we-support-your-choice' => 'نحن ندعم اختيارك',
     'shop.specs' => 'الكمية المتاحة',
 

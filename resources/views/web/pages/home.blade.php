@@ -42,11 +42,6 @@
                     </span>
                 </h1>
 
-                <h2
-                    class="mx-auto mt-7 max-w-xl text-base font-semibold leading-relaxed text-[#4d5562] md:text-xl lg:mx-0 lg:text-2xl">
-                    {{ trans('home.hydrate-&-nourish-your-hair') }}
-                </h2>
-
                 <div class="mt-9 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
 
                     <a href="{{ route('shop') }}"
