@@ -1,6 +1,6 @@
 <div align="center">
 
-# Qaid Store
+# Ecom and CRM
 
 **A modern, full-featured e-commerce platform built with Laravel 12**
 
