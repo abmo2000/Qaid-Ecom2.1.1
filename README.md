@@ -1,6 +1,6 @@
 <div align="center">
 
-# Ecom and CRM
+# steel unnamed project | Formal Qaideg.com
 
 **A modern, full-featured e-commerce platform built with Laravel 12**
 
