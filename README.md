@@ -542,6 +542,3 @@ For new workflows, test both English and Arabic requests, validation failures, f
 - Keep export/reporting logic isolated in dedicated export classes.
 - Continue validating new workflows with feature tests before deployment.
 
-## License
-
-This project is licensed under the MIT License.
