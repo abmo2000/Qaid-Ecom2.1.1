@@ -34,6 +34,20 @@ if (!function_exists('getBuisnessSettings')) {
 
 }
 
+if (!function_exists('getVacationSettings')) {
+    function getVacationSettings(): object
+    {
+        $settings = getBuisnessSettings('vacation-settings');
+
+        return (object) [
+            'enabled' => (bool) ($settings?->enabled ?? false),
+            'message' => $settings?->message ?: (app()->getLocale() === 'ar'
+                ? 'نحن حاليًا في إجازة قصيرة ولا يمكننا معالجة الطلبات الآن. سنعود قريبًا — شكرًا لتفهمكم.'
+                : "We're currently on a short break and can't process orders right now. We'll be back soon — thanks for your patience!"),
+        ];
+    }
+}
+
 if (!function_exists('getPageSeo')) {
     function getPageSeo(string $page, array $defaults = []): array
     {

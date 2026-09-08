@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Web;
 
 use App\Models\CartItem;
 use App\Services\OrderService;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\OrderCreateReq;
 use App\Services\CartService;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
@@ -29,8 +29,20 @@ class OrderController extends Controller
         return view('web.pages.checkout')->with(['total' => $total ,  'orderSettings' => $orderSettings , 'buisnessSettings' => $buisnessSettings , 'isFirstOrder' => $isUserFirstOrderDeliveryFree]);
 
     }
-    public function store(OrderCreateReq $request): JsonResponse
+    public function store(OrderCreateReq $request): Response
     {
+        $vacationSettings = getVacationSettings();
+
+        if ($vacationSettings->enabled) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $vacationSettings->message,
+                ], 503);
+            }
+
+            return redirect()->back()->with('error', $vacationSettings->message);
+        }
+
         $data = $request->validated();
 
         if ($request->hasFile('payment_proof')) {

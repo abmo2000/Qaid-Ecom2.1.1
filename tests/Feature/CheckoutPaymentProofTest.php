@@ -6,6 +6,7 @@ use App\Http\Requests\OrderCreateReq;
 use App\Models\CartItem;
 use App\Models\City;
 use App\Models\Order;
+use App\Models\BuisnessSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,44 @@ use Tests\TestCase;
 class CheckoutPaymentProofTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_vacation_mode_blocks_order_submission_with_flash_message(): void
+    {
+        $setting = BuisnessSetting::create(['key' => 'vacation-settings']);
+        $setting->translations()->createMany([
+            ['locale' => 'en', 'value' => ['enabled' => true, 'message' => 'Back soon.']],
+            ['locale' => 'ar', 'value' => ['enabled' => true, 'message' => 'سنعود قريبًا.']],
+        ]);
+
+        $this->assertTrue(getVacationSettings()->enabled);
+
+        $city = City::create([
+            'price' => 50,
+            'has_discussion_for_delivery' => false,
+        ]);
+
+        $sessionId = session()->getId();
+        session()->put('cart_session_id', $sessionId);
+
+        CartItem::create([
+            'session_id' => $sessionId,
+            'product_type' => 'product',
+            'product_id' => 1,
+            'quantity' => 1,
+            'price' => 100,
+        ]);
+
+        $response = $this->post('/order', [
+            'email' => 'customer@example.com',
+            'phone' => '+201234567890',
+            'city_id' => $city->id,
+            'payment_method' => 'cash',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error', 'Back soon.');
+        $this->assertDatabaseCount('orders', 0);
+    }
 
     public function test_public_storage_link_points_to_public_disk(): void
     {

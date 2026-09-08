@@ -8,6 +8,7 @@ Checkout
 
 <x-navbar></x-navbar>
 @php
+    $vacationSettings = getVacationSettings();
     $defaultCityId = auth()->check() ? auth()->user()->city_id ?? '' : '';
     if ($defaultCityId) {
         $savedCity = \App\Models\City::find($defaultCityId);
@@ -73,6 +74,12 @@ Checkout
 
             <form id="checkout-form" @submit.prevent="submitOrder" class="space-y-5 sm:space-y-6">
               @csrf
+
+              @if ($vacationSettings->enabled)
+                <div class="rounded-lg border border-amber-500/40 bg-amber-900/30 px-4 py-3 text-amber-100" role="alert">
+                  {{ $vacationSettings->message }}
+                </div>
+              @endif
 
               {{-- Section: Personal Info --}}
               <div>
@@ -390,6 +397,7 @@ Checkout
               </div>
 
               {{-- Place Order Button (mobile only - below form) --}}
+              @if (! $vacationSettings->enabled)
               <div class="lg:hidden">
                 <div class="pt-4 border-t border-gray-700 space-y-3">
                   <div x-show="form.delivery_option !== 'discuss'" class="flex justify-between items-center">
@@ -427,6 +435,7 @@ Checkout
                   </button>
                 </div>
               </div>
+              @endif
 
               {{-- Success Message --}}
               <div x-show="success" x-transition class="mt-4 p-4 bg-green-900 border border-green-600 rounded-lg text-green-200">
@@ -473,6 +482,7 @@ Checkout
               </div>
             </div>
 
+            @if (! $vacationSettings->enabled)
             <button type="submit" form="checkout-form" :disabled="loading" @click="$root.querySelector('form').requestSubmit()"
               class="w-full mt-6 py-3.5 bg-orange-600 hover:bg-orange-700 text-white text-lg font-semibold rounded-lg transition duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
               <span x-show="!loading">{{ trans('checkout.place_order') }}</span>
@@ -484,6 +494,7 @@ Checkout
                 {{ trans('checkout.processing') }}...
               </span>
             </button>
+            @endif
 
             <div x-show="success" x-transition class="mt-4 p-3 bg-green-900 border border-green-600 rounded-lg text-green-200 text-sm">
               <p class="font-semibold">{{ trans('checkout.order_success') }}</p>

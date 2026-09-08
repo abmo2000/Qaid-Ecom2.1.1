@@ -71,6 +71,7 @@
     <body class="app-body">
         @php
             $businessInfo = getBuisnessSettings('buisness-info');
+            $vacationSettings = getVacationSettings();
 
             $whatsappRaw = $businessInfo?->whatsapp_number ?: $businessInfo?->mobile_number ?: '';
             $whatsappDigits = preg_replace('/\D+/', '', (string) $whatsappRaw);
@@ -88,6 +89,12 @@
                         : 'https://t.me/' . ltrim($telegramRaw, '/'))
             ) : 'https://t.me/';
         @endphp
+
+        @if ($vacationSettings->enabled)
+            <div class="border-b border-amber-300/30 bg-amber-100 px-4 py-3 text-center text-sm font-medium text-amber-950" role="status">
+                {{ $vacationSettings->message }}
+            </div>
+        @endif
 
         @yield('content')
 
