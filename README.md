@@ -42,6 +42,7 @@ The normal request flow is: route -> middleware/controller -> model/service/acti
 - Product view analytics with session/authenticated-user de-duplication
 - Security event logging and admin dashboard monitoring
 - English and Arabic storefront localization with locale-aware routes and RTL rendering
+- Vacation Mode for temporarily pausing checkout while keeping the storefront and cart browsing active
 
 ## Tech Stack
 
@@ -160,7 +161,21 @@ Products have independent English and Arabic Meta Title, Meta Description, and M
 </details>
 
 <details>
-<summary><strong>10. Security, customer, and migration stability improvements</strong></summary>
+<summary><strong>10. Vacation Mode checkout pause</strong></summary>
+
+<br>
+
+The admin can enable a bilingual Vacation Mode that displays a site-wide banner in the active locale and blocks new customer orders without disabling browsing, cart building, wholesale requests, or contact forms.
+
+**Touched files:** `app/Filament/Resources/VacationSettings/` · `app/Helpers/helper.php` · `app/Http/Controllers/Web/OrderController.php` · `resources/views/web/layouts/main.blade.php` · `resources/views/web/pages/checkout.blade.php`
+
+**Admin flow:** open the Filament Business Settings section and use the `Vacation Mode` resource to toggle the feature and edit the English/Arabic vacation message.
+
+**Customer behavior:** the banner appears globally, checkout action buttons are hidden/disabled, and any checkout request is rejected server-side with the same vacation message flashed back to the user.
+</details>
+
+<details>
+<summary><strong>11. Security, customer, and migration stability improvements</strong></summary>
 
 <br>
 
@@ -206,6 +221,22 @@ composer run dev
 Configure database, `APP_URL`, mail, queue, storage, and OAuth values in `.env` before using the corresponding features. The wholesale quote PDF is managed through the Filament Wholesale Price Quote resource and must be uploaded/configured before download requests can succeed.
 
 `composer run dev` starts the Laravel server, queue listener, log viewer, and Vite together.
+
+### Vacation Mode
+
+Use the Filament admin panel to enable Vacation Mode from the Business Settings section:
+
+1. Open the admin dashboard.
+2. Go to `Business Settings` -> `Vacation Mode`.
+3. Toggle the switch to enable the pause.
+4. Edit the English and Arabic vacation message.
+5. Save the setting.
+
+Once enabled:
+- A site-wide banner appears across storefront pages.
+- Checkout submission buttons are hidden/disabled.
+- Any direct checkout request is rejected server-side and redirected back with a flash error message.
+- Browsing, cart updates, wholesale forms, and contact forms remain available.
 
 ## Useful Commands
 
