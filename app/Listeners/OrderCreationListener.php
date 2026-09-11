@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\AdminOrderNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomerOrderConfirmation;
+use App\Jobs\SendWhatsAppOrderConfirmation;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -32,7 +33,20 @@ class OrderCreationListener implements ShouldQueue
      */
     public function handle(OrderCreated $event): void
     {
-             Mail::to($event->order->customer->email)
+        try {
+            SendWhatsAppOrderConfirmation::dispatch(
+                $event->order,
+                $event->totalAmount,
+                $event->locale,
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('WhatsApp order confirmation could not be queued.', [
+                'order_id' => $event->order->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
+        Mail::to($event->order->customer->email)
             ->send(new CustomerOrderConfirmation($event->order, $event->items, $event->totalAmount));
 
         // Send email to admin

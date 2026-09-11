@@ -34,6 +34,7 @@ use App\Filament\Resources\SeoSettings\SeoSettingsResource;
 use App\Filament\Resources\TermsSettings\TermsSettingsResource;
 use App\Filament\Resources\SalesAdminInvoices\SalesAdminInvoicesResource;
 use App\Filament\Pages\ManageSmtpSettings;
+use App\Filament\Widgets\WhatsAppConnectionAlert;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -56,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 ActiveBuyersOverviewWidget::class,
+                WhatsAppConnectionAlert::class,
                 PendingOrdersOverviewWidget::class,
                 AccountWidget::class,
             ])

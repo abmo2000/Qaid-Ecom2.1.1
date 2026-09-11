@@ -184,6 +184,18 @@ Admin login and protected-path events are logged, customer profiles and order tr
 **Touched files:** `app/Jobs/LogSecurityEventJob.php` · `app/Services/SecurityEventLogger.php` · `app/Models/SecurityEvent.php` · `app/Filament/Widgets/DangerZoneWidget.php` · `app/Providers/FortifyServiceProvider.php` · `app/Http/Controllers/Web/ProfileController.php` · `database/migrations/2026_01_08_073730_change_on_order_items_table.php`
 </details>
 
+<details>
+<summary><strong>12. Evolution API WhatsApp order confirmations and admin connection management</strong></summary>
+
+<br>
+
+The application can send automatic bilingual WhatsApp order confirmations through a self-hosted Evolution API instance using a connected WhatsApp Business number. The super-admin-only WhatsApp Connection page provides QR linking, live connection status, linked phone visibility, reconnect, and logout controls. It also provides editable English and Arabic confirmation templates with `{customer_name}`, `{order_number}`, and `{order_total}` placeholders.
+
+Confirmations are dispatched as queued jobs after the order-created event, so WhatsApp API delays or failures do not block checkout or replace the existing email confirmations. The integration is configuration-driven, logs failures safely, retries transient send failures, and records `whatsapp_sent_at` for admin delivery visibility. When the instance is disconnected, the admin dashboard shows a warning and links back to the connection page.
+
+**Touched files:** `.env.example` · `config/services.php` · `app/Commands/CreateOrderCommand.php` · `app/Events/OrderCreated.php` · `app/Listeners/OrderCreationListener.php` · `app/Jobs/SendWhatsAppOrderConfirmation.php` · `app/Services/EvolutionWhatsAppService.php` · `app/Services/PhoneNumberService.php` · `app/Models/Order.php` · `app/Models/BuisnessSetting.php` · `app/Models/Translations/BuisnessSettingTranslation.php` · `app/Filament/Pages/WhatsAppConnection.php` · `app/Filament/Widgets/WhatsAppConnectionAlert.php` · `app/Providers/AppServiceProvider.php` · `app/Providers/Filament/AdminPanelProvider.php` · `app/Filament/Resources/Orders/Tables/OrdersTable.php` · `app/Filament/Resources/Orders/Schemas/OrderInfolist.php` · `database/migrations/2026_09_11_000000_add_whatsapp_sent_at_to_orders_table.php` · `resources/views/filament/pages/whatsapp-connection.blade.php` · `resources/views/filament/widgets/whatsapp-connection-alert.blade.php`
+</details>
+
 ## Getting Started
 
 ### Prerequisites
@@ -364,6 +376,49 @@ AdminUsers, Cities, Packages, Routines, SalesAdminInvoices
     Supporting administration for users, delivery cities, catalog groupings, and completed sales.
 ```
 
+### WhatsApp Order Confirmations
+
+```text
+app/Services/EvolutionWhatsAppService.php
+    Config-driven Evolution API wrapper for text messages, connection status, QR retrieval, and logout; failures are logged and returned safely.
+app/Jobs/SendWhatsAppOrderConfirmation.php
+    Queued order-confirmation job that normalizes the customer phone, fetches the locale-specific template, replaces placeholders, sends the message, retries API failures, and records delivery time.
+app/Filament/Pages/WhatsAppConnection.php
+    Super-admin-only connection page with QR polling, connection status, reconnect/logout actions, bilingual template editing, placeholder guidance, and soft placeholder warnings.
+app/Filament/Widgets/WhatsAppConnectionAlert.php
+    Dashboard warning widget that polls the Evolution connection and links admins to the connection page when WhatsApp is unavailable.
+resources/views/filament/pages/whatsapp-connection.blade.php
+    Connection status, QR code, warning, reconnect, and embedded bilingual message-template form UI.
+resources/views/filament/widgets/whatsapp-connection-alert.blade.php
+    Persistent disconnected-state warning shown on the admin dashboard.
+app/Models/BuisnessSetting.php
+app/Models/Translations/BuisnessSettingTranslation.php
+    Existing Astrotomic translatable settings pattern used to store the `whatsapp-message` English/Arabic template values.
+app/Models/Order.php
+    Exposes customer phone/name accessors and carries the nullable WhatsApp delivery timestamp.
+app/Filament/Resources/Orders/Tables/OrdersTable.php
+app/Filament/Resources/Orders/Schemas/OrderInfolist.php
+    Show the WhatsApp confirmation timestamp in the admin order list/detail views.
+app/Providers/Filament/AdminPanelProvider.php
+    Registers the dashboard WhatsApp warning widget; Filament discovers the page from `app/Filament/Pages`.
+app/Commands/CreateOrderCommand.php
+    Creates the order and emits the `OrderCreated` event after the order transaction.
+app/Events/OrderCreated.php
+    Carries the order payload and captures the customer locale for queued notifications.
+app/Listeners/OrderCreationListener.php
+    Dispatches the WhatsApp job alongside the existing customer/admin email notifications.
+app/Providers/AppServiceProvider.php
+    Registers `OrderCreationListener` for the `OrderCreated` event.
+app/Services/PhoneNumberService.php
+    Validates and formats customer phone numbers before the job sends them to Evolution API.
+config/services.php
+    Maps `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, and `EVOLUTION_INSTANCE` into the Evolution service configuration.
+.env.example
+    Documents placeholder values for the three Evolution API environment keys.
+```
+
+The Evolution API instance is external infrastructure. Set `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, and `EVOLUTION_INSTANCE` in `.env`; connect the dedicated WhatsApp Business number from the admin QR page.
+
 Admin access is resource-specific. For example, Wholesale Requests allows super admins, sales admins, or users with the `customers` extra permission; SEO requires super admin or `seo_settings` permission.
 
 ### Models and Services
@@ -424,6 +479,8 @@ app/Exports/WholesaleRequestsExport.php
     Product view analytics records.
 2025_11_28_143504_create_orders_table.php
     Order header data; related migrations add payment, status, admin, and coupon fields.
+2026_09_11_000000_add_whatsapp_sent_at_to_orders_table.php
+    Adds the nullable `whatsapp_sent_at` timestamp used to show WhatsApp confirmation delivery status.
 2026_03_21_225132_create_coupons_table.php
     Coupon definitions and discount rules.
 ```
@@ -509,6 +566,16 @@ resources/views/emails/
 4. `CreateOrderCommand`, `OrderDto`, events, and listeners create the order and send notifications.
 5. Admin order resources manage status and payment fields; customer account routes expose order history and invoices.
 
+### WhatsApp Order Confirmation
+
+1. `CreateOrderCommand` creates the order and emits `OrderCreated` after the transaction commits; the event captures the request locale.
+2. `OrderCreationListener` keeps the existing email/admin notifications and dispatches `SendWhatsAppOrderConfirmation` separately.
+3. The queued job fetches the saved `whatsapp-message` translation for the order locale, falling back to the default English/Arabic template when no setting exists.
+4. `{customer_name}`, `{order_number}`, and `{order_total}` are replaced with the order values before sending.
+5. `PhoneNumberService` validates and formats the customer phone as E.164.
+6. `EvolutionWhatsAppService` calls the configured Evolution API `sendText` endpoint; failures are logged, retried by the job, and never block checkout or email delivery.
+7. The super-admin WhatsApp Connection page manages QR linking and connection state, while the dashboard alert highlights a disconnected instance and order admin views show `whatsapp_sent_at`.
+
 ### Contact, Customers, and Security
 
 - Contact submissions are validated by `ContactController`, stored as `ContactMessage`, and processed by `ContactMessageJob`.
@@ -519,6 +586,10 @@ resources/views/emails/
 
 | Change | Start here |
 |---|---|
+| Change the WhatsApp confirmation message template | The super-admin `WhatsApp Connection` page; values are stored as the translated `whatsapp-message` `BuisnessSetting`. |
+| Change WhatsApp connection/QR logic | `app/Services/EvolutionWhatsAppService.php` and `app/Filament/Pages/WhatsAppConnection.php`. |
+| Change when/how the confirmation is sent | `app/Jobs/SendWhatsAppOrderConfirmation.php` and `app/Listeners/OrderCreationListener.php`. |
+| Change Evolution API credentials or instance | `config/services.php` and `.env` keys `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, and `EVOLUTION_INSTANCE`. |
 | Change Egyptian wholesale phone rules | `app/Http/Controllers/Web/WholesaleController.php` and the client validator in `resources/views/web/pages/wholesale-sales.blade.php`. |
 | Reuse country-aware phone validation | `app/Rules/PhoneValidationRule.php` and `app/Services/PhoneNumberService.php`. |
 | Change wholesale form fields or success UI | `resources/views/web/pages/wholesale-sales.blade.php`. |
@@ -563,6 +634,7 @@ For new workflows, test both English and Arabic requests, validation failures, f
 - If an admin resource is missing from navigation, check its `canAccess()` result and the Filament resource discovery path in `AdminPanelProvider.php`.
 - If metadata appears stale, clear Blade/config caches and confirm the active locale and `seo-page-*` record.
 - If a migration fails on a fresh SQLite database, inspect migration ordering and avoid database-specific SQL in new migrations.
+- If WhatsApp confirmations are not sending, check the WhatsApp Connection admin page for a disconnected state and confirm `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, and `EVOLUTION_INSTANCE` are set in `.env`.
 
 ## Roadmap / Notes for Future Development
 

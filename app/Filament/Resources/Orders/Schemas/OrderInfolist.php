@@ -56,6 +56,11 @@ class OrderInfolist
                                     'pending' => 'warning',
                                     default => 'danger',
                                 }),
+                            TextEntry::make('whatsapp_sent_at')
+                                ->label('WhatsApp Confirmation')
+                                ->dateTime()
+                                ->placeholder('Not sent')
+                                ->icon('heroicon-m-chat-bubble-left-right'),
                             ImageEntry::make('payment_proof_path')
                                 ->label('Transfer Proof')
                                 ->disk('public')

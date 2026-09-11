@@ -15,12 +15,14 @@ class OrderCreated implements ShouldDispatchAfterCommit
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public string $locale;
+
     /**
      * Create a new event instance.
      */
     public function __construct(public Collection $items , public int $totalAmount , public Order $order)
     {
-        //
+        $this->locale = app()->getLocale();
     }
 
     /**

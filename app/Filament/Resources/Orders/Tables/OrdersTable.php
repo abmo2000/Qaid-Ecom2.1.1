@@ -47,6 +47,11 @@ class OrdersTable
                 TextColumn::make('amount')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('whatsapp_sent_at')
+                    ->label('WhatsApp Confirmation')
+                    ->dateTime()
+                    ->placeholder('Not sent')
+                    ->toggleable(isToggledHiddenByDefault: true),
                                 TextColumn::make('customer_address')
                       ->label("Customer Address")
                     ->searchable(),
