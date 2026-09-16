@@ -47,4 +47,9 @@ return [
         'instance' => env('EVOLUTION_INSTANCE'),
     ],
 
+    'qaid_automation' => [
+        'url' => env('QAID_AUTOMATION_URL'),
+        'secret' => env('QAID_AUTOMATION_SECRET'),
+    ],
+
 ];

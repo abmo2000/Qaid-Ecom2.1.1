@@ -1,5 +1,5 @@
-@if ($state !== 'open')
-    <div wire:poll.30s="refreshConnection" class="fi-wi-widget">
+<div wire:poll.30s="refreshConnection" class="fi-wi-widget">
+    @if ($state !== 'open')
         <x-filament::section>
             <div class="flex items-center justify-between gap-4">
                 <div>
@@ -13,5 +13,5 @@
                 @endif
             </div>
         </x-filament::section>
-    </div>
-@endif
+    @endif
+</div>
