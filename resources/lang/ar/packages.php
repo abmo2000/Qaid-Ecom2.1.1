@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'form' => [
+        'translations' => 'ترجمات المجموعة',
+        'english' => 'English',
+        'arabic' => 'العربية',
+        'title_english' => 'العنوان (الإنجليزية)',
+        'description_english' => 'الوصف (الإنجليزية)',
+        'title_arabic' => 'العنوان (العربية)',
+        'description_arabic' => 'الوصف (العربية)',
+        'pricing_status' => 'السعر والحالة',
+        'pricing_status_help' => 'حدد سعر المجموعة وما إذا كانت متاحة في المتجر.',
+        'price' => 'السعر',
+        'is_active' => 'نشطة',
+        'package_contents' => 'محتويات المجموعة',
+        'package_contents_help' => 'اختر المنتجات التي ستتضمنها هذه المجموعة.',
+        'categories' => 'تصفية حسب الفئات',
+        'categories_help' => 'اختياري: اختر فئات لتضييق البحث. عند عدم اختيار فئة، يشمل البحث جميع المنتجات.',
+        'products' => 'المنتجات',
+        'products_help' => 'ابحث بالإنجليزية أو العربية. تظهر حتى 50 نتيجة، وتشمل المنتجات غير المنشورة، وتبقى المنتجات المختارة محددة عند تغيير الفئة.',
+        'products_search_prompt' => 'اكتب اسم المنتج للبحث بالإنجليزية أو العربية.',
+        'products_searching' => 'جارٍ البحث عن المنتجات...',
+        'products_no_results' => 'لا توجد منتجات تطابق هذا البحث.',
+        'unnamed_category' => 'الفئة رقم :id',
+        'unnamed_product' => 'المنتج رقم :id',
+        'uncategorized' => 'دون فئة',
+    ],
+    'table' => [
+        'name' => 'الاسم',
+        'products_count' => 'المنتجات',
+        'created_at' => 'تاريخ الإنشاء',
+        'status' => 'الحالة',
+        'any_status' => 'كل الحالات',
+        'active' => 'نشطة',
+        'inactive' => 'غير نشطة',
+    ],
+];

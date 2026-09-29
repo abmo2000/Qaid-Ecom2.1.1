@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'form' => [
+        'translations' => 'Package translations',
+        'english' => 'English',
+        'arabic' => 'العربية',
+        'title_english' => 'Title (English)',
+        'description_english' => 'Description (English)',
+        'title_arabic' => 'Title (Arabic)',
+        'description_arabic' => 'Description (Arabic)',
+        'pricing_status' => 'Pricing & Status',
+        'pricing_status_help' => 'Set the package price and whether it is available in the storefront.',
+        'price' => 'Price',
+        'is_active' => 'Active',
+        'package_contents' => 'Package Contents',
+        'package_contents_help' => 'Choose products to include in this package.',
+        'categories' => 'Filter by categories',
+        'categories_help' => 'Optional: choose categories to narrow product search. With no category selected, search covers the full catalog.',
+        'products' => 'Products',
+        'products_help' => 'Search in English or Arabic. Results are limited to 50, unpublished products are included, and selected products stay selected when changing the category filter.',
+        'products_search_prompt' => 'Type a product name to search in English or Arabic.',
+        'products_searching' => 'Searching products...',
+        'products_no_results' => 'No products match this search.',
+        'unnamed_category' => 'Category #:id',
+        'unnamed_product' => 'Product #:id',
+        'uncategorized' => 'Uncategorized',
+    ],
+    'table' => [
+        'name' => 'Name',
+        'products_count' => 'Products',
+        'created_at' => 'Created at',
+        'status' => 'Status',
+        'any_status' => 'Any status',
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+    ],
+];

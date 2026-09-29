@@ -3,14 +3,17 @@
 namespace Tests\Feature;
 
 use App\Http\Requests\OrderCreateReq;
+use App\Models\BuisnessSetting;
 use App\Models\CartItem;
+use App\Models\Category;
 use App\Models\City;
 use App\Models\Order;
-use App\Models\BuisnessSetting;
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 use Tests\TestCase;
 
 class CheckoutPaymentProofTest extends TestCase
@@ -70,17 +73,47 @@ class CheckoutPaymentProofTest extends TestCase
             'has_discussion_for_delivery' => false,
         ]);
 
+        $category = Category::query()->create([
+            'image' => 'categories/test.jpg',
+            'title' => 'Test category',
+        ]);
+        $product = Product::query()->create([
+            'image' => 'products/test.jpg',
+            'price' => 100,
+            'in_stock' => true,
+            'featured' => false,
+            'category_id' => $category->id,
+            'is_published' => true,
+            'stock' => 10,
+        ]);
+        $product->translateOrNew('en')->fill([
+            'name' => 'Test product',
+            'description' => 'Test product description',
+        ])->save();
+
+        session()->put('cart_session_id', session()->getId());
+
         CartItem::create([
             'session_id' => session()->getId(),
             'product_type' => 'product',
-            'product_id' => 1,
+            'product_id' => $product->id,
             'quantity' => 1,
             'price' => 100,
         ]);
 
-        $file = UploadedFile::fake()->image('transfer-proof.jpg', 600, 600);
+        $fakeImage = UploadedFile::fake()->image('transfer-proof.jpg', 600, 600);
+        $file = UploadedFile::createFromBase(
+            new SymfonyUploadedFile(
+                $fakeImage->getPathname(),
+                $fakeImage->getClientOriginalName(),
+                $fakeImage->getClientMimeType(),
+                UPLOAD_ERR_OK,
+                true,
+            ),
+            test: true,
+        );
 
-        $response = $this->postJson('/order', [
+        $response = $this->post('/order', [
             'name' => 'Test User',
             'email' => 'user@example.com',
             'phone' => '+201234567890',
