@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\SmtpSetting;
 use App\Models\ProductTrial;
 use App\Services\CartService;
+use App\Services\OfferService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Config;
@@ -53,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
 
+        });
+
+         View::composer('components.navbar', function ($view) {
+            $view->with('maximumOfferDiscount', app(OfferService::class)->maximumDiscountPercentage());
         });
 
          Relation::enforceMorphMap([

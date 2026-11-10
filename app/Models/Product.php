@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Astrotomic\Translatable\Contracts\Translatable;
 use Astrotomic\Translatable\Translatable as AstrotomicTranslatable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Product extends Model implements Translatable , Cartable
 {
     use AstrotomicTranslatable , HasItems , CartableHandler , HasOrders, HasFactory;
+
+    public const OFFERS_MAX_DISCOUNT_CACHE_KEY = 'offers.maximum_discount';
 
     public function getRouteKeyName(): string
     {
@@ -98,6 +101,33 @@ class Product extends Model implements Translatable , Cartable
          return ! empty($this->sale);
     }
 
+    public function scopeOnSale(Builder $query): Builder
+    {
+       return $query
+           ->where('products.is_published', true)
+           ->where('products.in_stock', true)
+           ->where('products.stock', '>', 0)
+           ->whereHas('sale', function (Builder $saleQuery) {
+               $saleQuery
+                   ->where('sale_price', '>', 0)
+                   ->whereColumn('product_sales.sale_price', '<', 'products.price');
+           });
+    }
+
+    public function getDiscountPercentageAttribute(): int
+    {
+       if (! $this->sale || $this->price <= 0 || $this->sale->sale_price >= $this->price) {
+           return 0;
+       }
+
+       return (int) round((($this->price - $this->sale->sale_price) / $this->price) * 100);
+    }
+
+    public function getAmountSavedAttribute(): int
+    {
+       return max(0, (int) $this->price - (int) ($this->sale?->sale_price ?? $this->price));
+    }
+
     public function isOutOfStock(): bool
     {
         return ! $this->in_stock || ($this->stock !== null && $this->stock <= 0);
@@ -105,7 +135,10 @@ class Product extends Model implements Translatable , Cartable
 
      protected static function booted(): void
     {
-        static::deleting(function (Product $product) {
+         static::saved(fn () => \Illuminate\Support\Facades\Cache::forget(self::OFFERS_MAX_DISCOUNT_CACHE_KEY));
+         static::deleted(fn () => \Illuminate\Support\Facades\Cache::forget(self::OFFERS_MAX_DISCOUNT_CACHE_KEY));
+
+         static::deleting(function (Product $product) {
             $images = is_array($product->images) ? $product->images : [];
 
             foreach (collect([$product->image, ...$images])->filter()->unique() as $image) {

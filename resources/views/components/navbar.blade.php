@@ -67,10 +67,13 @@
                 <a href="{{ route('contact') }}" class="nav-link">{{ trans('navbar.contact') }}</a>
                 <a href="{{ route('wholesale-sales') }}" class="nav-link">{{ trans('wholesale.title') }}</a>
 
-                <a href="{{ route('home') }}#fearured-products"
-                    @if(request()->routeIs('home')) @click.prevent="scrollToSection('fearured-products')" @endif
-                    class="nav-link cursor-pointer">
-                    {{ trans('navbar.featured-products') }}
+                <a href="{{ route('offers.index') }}"
+                    @class(['nav-link best-offers-nav-link inline-flex items-center gap-1.5', 'text-offer' => request()->routeIs('offers.*')])
+                    @if(request()->routeIs('offers.*')) aria-current="page" @endif>
+                    <span>{{ trans('navbar.best-offers') }}</span>
+                    <span class="offer-nav-badge inline-flex shrink-0 items-center rounded-full bg-offer px-2 py-1 text-[9px] font-black uppercase leading-none tracking-[0.08em] text-white">
+                        {{ $maximumOfferDiscount > 0 ? __('offers.up_to_short', ['discount' => $maximumOfferDiscount]) : __('offers.sale_badge') }}
+                    </span>
                 </a>
             </div>
 
@@ -261,10 +264,13 @@
             <a href="{{ route('shop') }}" class="mobile-nav-link">{{ trans('navbar.shop') }}</a>
             <a href="{{ route('contact') }}" class="mobile-nav-link">{{ trans('navbar.contact') }}</a>
             <a href="{{ route('wholesale-sales') }}" class="mobile-nav-link">{{ trans('wholesale.title') }}</a>
-            <a href="{{ route('home') }}#fearured-products"
-                @if(request()->routeIs('home')) @click.prevent="scrollToSection('fearured-products')" @endif
-                class="mobile-nav-link">
-                {{ trans('navbar.featured-products') }}
+            <a href="{{ route('offers.index') }}"
+                @class(['mobile-nav-link flex-wrap', 'text-offer' => request()->routeIs('offers.*')])
+                @if(request()->routeIs('offers.*')) aria-current="page" @endif>
+                <span>{{ trans('navbar.best-offers') }}</span>
+                <span class="offer-nav-badge ms-auto inline-flex shrink-0 items-center rounded-full bg-offer px-2 py-1 text-[9px] font-black uppercase leading-none tracking-[0.08em] text-white">
+                    {{ $maximumOfferDiscount > 0 ? __('offers.up_to_short', ['discount' => $maximumOfferDiscount]) : __('offers.sale_badge') }}
+                </span>
             </a>
 
             @guest

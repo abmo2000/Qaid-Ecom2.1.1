@@ -5,7 +5,7 @@
 @section('content')
     <x-navbar />
 
-    <main class="account-page-main qaid-page-background min-h-screen text-[#0d1b2a]">
+    <main class="qaid-page-offset qaid-page-background min-h-screen pb-16 text-[#0d1b2a]">
         <div class="container mx-auto max-w-5xl px-4">
             <header class="mb-8 text-start">
                 <p class="text-xs font-black uppercase tracking-[0.32em] text-[#9b762f]">

@@ -6,7 +6,7 @@ return [
   'shop' => 'المنتجات',
   'contact' => 'تواصل معنا',
   'routine' => 'روتين',
-  'featured-products' => 'المنتجات المميزة',
+  'best-offers' => 'أفضل العروض',
   'concepts' => 'مبادئنا',
       'shop.specs' => 'الكمية المتاحة',
 ];

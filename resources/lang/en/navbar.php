@@ -7,6 +7,6 @@ return [
   'shop' => 'Shop',
   'contact' => 'Contact',
   'routine' => 'Routine',
-  'featured-products' => 'Featured Products',
+  'best-offers' => 'Best Offers',
   'concepts' => "Our Concepts",
 ];

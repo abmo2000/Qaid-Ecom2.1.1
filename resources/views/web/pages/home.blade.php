@@ -48,7 +48,7 @@
                     </a>
 
 
-                    <a href="#fearured-products"
+                    <a href="#featured-products"
                         class="inline-flex items-center justify-center rounded-full border border-[#b8913f]/40 bg-white/70 px-6 py-3.5 text-sm font-black uppercase tracking-wider text-[#0d1b2a] shadow-sm backdrop-blur transition hover:border-[#b8913f] hover:text-[#9b762f] md:px-7 md:py-4">
                         Explore Products
                     </a>
@@ -214,7 +214,7 @@
     </div>
 </section>
     <!-- Featured Products -->
-    <section id="fearured-products" class="bg-[#0d1b2a] py-16 text-white md:py-24">
+    <section id="featured-products" class="bg-[#0d1b2a] py-16 text-white md:py-24">
        <div class="w-full px-4">
             <h2 class="mb-3 text-center text-4xl font-black uppercase tracking-wide text-[#f7d879] md:text-5xl">
                 {{ trans('home.featured-products') }}</h2>
@@ -242,6 +242,12 @@
                                 @endforeach
                             </div>
                             <div class="swiper-pagination products-swiper-pagination"></div>
+                        </div>
+                        <div class="mt-12 flex justify-center">
+                            <a href="{{ route('offers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-[#d8b35a] px-7 py-3.5 text-sm font-black uppercase tracking-wider text-[#0d1b2a] shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-[#f7d879] focus:outline-none focus:ring-4 focus:ring-[#d8b35a]/30">
+                                {{ __('home.view-all-offers') }}
+                                <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                            </a>
                         </div>
                     </div>
                 @empty
