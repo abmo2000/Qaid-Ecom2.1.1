@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductSale;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Services\OfferService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -178,12 +179,93 @@ class OffersPageTest extends TestCase
             ->assertSee('<bdi dir="ltr">3</bdi>', false);
     }
 
+    public function test_brand_and_category_filters_use_or_within_each_group_and_and_between_groups(): void
+    {
+        $categoryOne = $this->createCategory('Gaming', 'ألعاب');
+        $categoryTwo = $this->createCategory('Accessories', 'ملحقات');
+        $brandAlpha = Brand::create(['name' => 'Brand Alpha']);
+        $brandBeta = Brand::create(['name' => 'Brand Beta']);
+        $brandGamma = Brand::create(['name' => 'Brand Gamma']);
+        $brandDelta = Brand::create(['name' => 'Brand Delta']);
+
+        $alphaCategoryOne = $this->createProduct('Alpha gaming offer', 1000, 700, [
+            'brand' => $brandAlpha->name,
+            'category_id' => $categoryOne->id,
+        ]);
+        $betaCategoryOne = $this->createProduct('Beta gaming offer', 1000, 600, [
+            'brand' => $brandBeta->name,
+            'category_id' => $categoryOne->id,
+        ]);
+        $gammaCategoryOne = $this->createProduct('Gamma gaming offer', 1000, 500, [
+            'brand' => $brandGamma->name,
+            'category_id' => $categoryOne->id,
+        ]);
+        $this->createProduct('Delta accessories offer', 1000, 500, [
+            'brand' => $brandDelta->name,
+            'category_id' => $categoryTwo->id,
+        ]);
+        $alphaCategoryTwo = $this->createProduct('Alpha accessory offer', 1000, 650, [
+            'brand' => $brandAlpha->name,
+            'category_id' => $categoryTwo->id,
+        ]);
+
+        $response = $this->get(route('offers.index', [
+            'brands' => [$brandAlpha->id, $brandBeta->id],
+            'categories' => [$categoryOne->id],
+            'discount' => 25,
+        ]));
+
+        $response
+            ->assertOk()
+            ->assertSee($alphaCategoryOne->name)
+            ->assertSee($betaCategoryOne->name)
+            ->assertDontSee($gammaCategoryOne->name)
+            ->assertDontSee($alphaCategoryTwo->name)
+            ->assertSee('name="brands[]" value="'.$brandAlpha->id.'"', false)
+            ->assertSee('name="brands[]" value="'.$brandBeta->id.'"', false)
+            ->assertSee('name="categories[]" value="'.$categoryOne->id.'"', false)
+            ->assertSee('checked', false)
+            ->assertSee('value="'.$brandDelta->id.'"', false)
+            ->assertSee('data-brand-name="brand delta"', false)
+            ->assertSee('disabled', false)
+            ->assertSee('Brand Alpha')
+            ->assertSee('Brand Beta')
+            ->assertSee('aria-label="Brands"', false)
+            ->assertSee('Active filters')
+            ->assertSee('href="'.e(route('offers.index', [
+                'categories' => [$categoryOne->id],
+                'discount' => 25,
+                'brands' => [$brandBeta->id],
+            ])).'"', false);
+    }
+
+    public function test_brand_filter_search_and_show_more_controls_render_for_long_lists(): void
+    {
+        for ($index = 1; $index <= 9; $index++) {
+            $brand = Brand::create(['name' => 'Brand '.$index]);
+            $this->createProduct('Brand offer '.$index, 1000, 700, ['brand' => $brand->name]);
+        }
+
+        $this->get(route('offers.index'))
+            ->assertOk()
+            ->assertSee('data-brand-search', false)
+            ->assertSee('data-brand-toggle', false)
+            ->assertSee(__('offers.show_more'))
+            ->assertSee(__('offers.show_less'));
+    }
+
     public function test_offer_page_shows_empty_state_when_there_are_no_eligible_sales(): void
     {
         $this->get(route('offers.index'))
             ->assertOk()
             ->assertSee(__('offers.empty_title'))
             ->assertSee(route('shop'));
+
+        $this->get(route('offers.index', ['brands' => [999999]]))
+            ->assertOk()
+            ->assertSee(__('offers.empty_title'))
+            ->assertSee(__('offers.brand_fallback'))
+            ->assertSee(__('offers.clear_all_filters'));
     }
 
     public function test_maximum_discount_cache_is_cleared_when_a_sale_changes(): void
@@ -238,5 +320,14 @@ class OffersPageTest extends TestCase
         ]);
 
         return $product->fresh();
+    }
+
+    private function createCategory(string $englishTitle, string $arabicTitle): Category
+    {
+        $category = Category::create();
+        $category->translateOrNew('en')->fill(['locale' => 'en', 'title' => $englishTitle])->save();
+        $category->translateOrNew('ar')->fill(['locale' => 'ar', 'title' => $arabicTitle])->save();
+
+        return $category;
     }
 }
