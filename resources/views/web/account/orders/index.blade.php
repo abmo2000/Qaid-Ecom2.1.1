@@ -1,51 +1,53 @@
-@extends('web.layouts.main')
+@extends('web.layouts.account')
 
-@section('title', 'My Orders')
+@section('account-title', __('profile.orders_title'))
+@section('account-description', __('profile.orders_intro'))
+@section('account-active', 'orders')
 
-@section('content')
-<x-navbar />
+@section('account-content')
+    @if($orders->isEmpty())
+        <div class="rounded-[2rem] border border-[#d8b35a]/25 bg-white p-8 shadow-[0_22px_55px_rgba(13,27,42,.10)] sm:p-10">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-[#f7f1e3] text-xl text-[#9b762f]">
+                <i class="fas fa-box-open" aria-hidden="true"></i>
+            </div>
+            <h2 class="mt-5 text-xl font-bold text-[#0d1b2a]">{{ __('profile.empty_orders') }}</h2>
+            <a href="{{ route('shop') }}" class="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-[#0d1b2a] px-6 py-3 text-sm font-black uppercase tracking-wider text-[#f7d879] transition duration-200 hover:bg-[#13283d] focus:outline-none focus:ring-4 focus:ring-[#d8b35a]/30">
+                {{ __('profile.continue_shopping') }}
+            </a>
+        </div>
+    @else
+        <div class="space-y-5">
+            @foreach($orders as $order)
+                @php($orderReference = (string) ($order->order_id ?? $order->id))
+                <article class="grid items-start gap-5 rounded-[2rem] border border-[#d8b35a]/25 bg-white p-6 shadow-[0_22px_55px_rgba(13,27,42,.10)] transition duration-200 hover:-translate-y-0.5 md:grid-cols-[minmax(0,1.35fr)_minmax(9rem,1fr)_minmax(9rem,.85fr)] md:gap-8">
+                    <div class="min-w-0">
+                        <p class="text-xs font-black uppercase leading-4 tracking-[0.18em] text-[#9b762f]">{{ __('profile.order_label') }}</p>
+                        <h2 class="mt-2 whitespace-nowrap text-xl font-bold leading-6 text-[#0d1b2a]" title="{{ $orderReference }}">#{{ mb_strtoupper(mb_substr($orderReference, 0, 8)) }}</h2>
+                        <p class="mt-1 text-sm text-slate-500">{{ __('profile.placed_at', ['date' => $order->created_at->diffForHumans()]) }}</p>
+                    </div>
 
-<section class="py-16 bg-black min-h-screen text-white">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col gap-4 mb-10">
-            <h1 class="text-4xl font-bold">My Orders</h1>
-            <p class="text-gray-300 max-w-2xl">Track the current status of your orders, see shipping progress, and review orders once they are received.</p>
+                    <div>
+                        <p class="text-xs font-black uppercase leading-4 tracking-[0.18em] text-[#9b762f]">{{ __('profile.status') }}</p>
+                        <span class="mt-2 inline-flex min-h-8 items-center rounded-full bg-[#f7f1e3] px-3 py-1 text-sm font-semibold text-[#0d1b2a]">
+                            {{ ucfirst($order->status) }}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-3 md:flex-col md:items-end md:text-end">
+                        <div>
+                            <p class="text-xs font-black uppercase leading-4 tracking-[0.18em] text-[#9b762f]">{{ __('profile.total') }}</p>
+                            <p class="mt-2 text-lg font-bold leading-6 text-[#0d1b2a]">{{ number_format($order->amount, 2) }} EGP</p>
+                        </div>
+                        <a href="{{ route('account.orders.show', $order) }}" class="inline-flex min-h-10 items-center justify-center self-end rounded-full border border-[#b8913f]/50 bg-white px-5 py-2 text-sm font-bold text-[#0d1b2a] transition duration-200 hover:bg-[#f7f1e3] focus:outline-none focus:ring-4 focus:ring-[#d8b35a]/20">
+                            {{ __('profile.view_details') }}
+                        </a>
+                    </div>
+                </article>
+            @endforeach
         </div>
 
-        @if($orders->isEmpty())
-            <div class="bg-gray-900 rounded-3xl shadow-lg p-10">
-                <p class="text-lg text-gray-300">You haven't placed any orders yet.</p>
-            </div>
-        @else
-            <div class="space-y-6">
-                @foreach($orders as $order)
-                    <div class="bg-gray-900 rounded-3xl shadow-lg p-6 grid gap-4 md:grid-cols-3 items-center">
-                        <div>
-                            <div class="text-sm text-gray-400 uppercase tracking-wider">Order</div>
-                            <div class="text-xl font-semibold">#{{ $order->order_id ?? $order->id }}</div>
-                            <div class="text-sm text-gray-400">Placed {{ $order->created_at->diffForHumans() }}</div>
-                        </div>
-
-                        <div>
-                            <div class="text-sm text-gray-400 uppercase tracking-wider">Status</div>
-                            <div class="mt-2 inline-flex items-center rounded-full bg-gray-800 px-3 py-1 text-sm font-semibold text-white">
-                                {{ ucfirst($order->status) }}
-                            </div>
-                        </div>
-
-                        <div class="space-y-2 text-right">
-                            <div class="text-sm text-gray-400">Total</div>
-                            <div class="text-lg font-semibold">{{ number_format($order->amount, 2) }} EGP</div>
-                            <a href="{{ route('account.orders.show', $order) }}" class="inline-flex items-center justify-center rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition">View details</a>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="mt-8">
-                {{ $orders->links('pagination::tailwind') }}
-            </div>
-        @endif
-    </div>
-</section>
+        <div class="mt-8">
+            {{ $orders->links('pagination::tailwind') }}
+        </div>
+    @endif
 @endsection

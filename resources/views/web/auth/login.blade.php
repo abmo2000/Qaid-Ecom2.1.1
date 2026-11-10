@@ -1,60 +1,77 @@
 @extends('web.layouts.main')
 
 @section('title')
-  Login
+    {{ trans('auth.sign_in') }}
 @endsection
 
 @section('content')
- <x-navbar></x-navbar>
+    <x-navbar></x-navbar>
 
- <section class="py-16 md:py-24 bg-black min-h-screen">
-   <div class="container mx-auto px-4">
-    <h2 class="text-white text-center text-4xl md:text-5xl font-bold mb-16">{{ trans('auth.sign_in') }}</h2>
+    <section class="qaid-page-background min-h-screen px-4 pb-16 pt-32 text-qaid-navy md:pb-24 md:pt-40">
+        <div class="mx-auto max-w-md">
+            <h1 class="mb-8 text-center text-4xl font-black uppercase tracking-wide text-qaid-navy sm:text-5xl">
+                {{ trans('auth.sign_in') }}
+            </h1>
 
-    <div class="max-w-md mx-auto">
-      <div class="bg-gray-800 bg-opacity-95 backdrop-blur-md rounded-3xl shadow-2xl border border-gray-700 p-8 md:p-12">
-        <x-errors />
+            <div class="rounded-3xl border border-qaid-gold/25 bg-white/95 p-6 shadow-2xl shadow-qaid-navy/10 sm:p-10">
+                @if(session('status') === 'passwords.reset')
+                    <p role="status" class="mb-6 rounded-xl border border-qaid-gold/35 bg-qaid-cream px-4 py-3 text-sm text-qaid-navy">
+                        {{ trans('auth.password_reset_success') }}
+                    </p>
+                @endif
 
-        <form method="POST" action="{{ route('login') }}" class="space-y-6">
-          @csrf
+                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    @csrf
 
-          <x-web-input
-            type="email"
-            name="email"
-            :label="trans('auth.email') ?? 'Email address'"
-            :placeholder="trans('auth.email-placeholder')"
-            required
-            autofocus
-          />
+                    <x-web-input
+                        type="email"
+                        name="email"
+                        :label="trans('auth.email')"
+                        :placeholder="trans('auth.email-placeholder')"
+                        label-class="text-qaid-navy"
+                        error-class="text-red-700"
+                        class="auth-input-light"
+                        required
+                        autofocus
+                        autocomplete="username"
+                    />
 
-          <x-web-input
-            type="password"
-            name="password"
-            :label="trans('auth.pass') ?? 'Password'"
-            :placeholder="trans('auth.password-placeholder')"
-            required
-          />
+                    <div class="space-y-2">
+                        <x-web-input
+                            type="password"
+                            name="password"
+                            :label="trans('auth.pass')"
+                            :placeholder="trans('auth.password-placeholder')"
+                            label-class="text-qaid-navy"
+                            toggle-class="text-slate-500 hover:text-qaid-navy"
+                            error-class="text-red-700"
+                            class="auth-input-light"
+                            required
+                            autocomplete="current-password"
+                        />
+                        <div class="text-end">
+                            <a href="{{ route('password.request') }}"
+                               class="text-sm font-bold text-qaid-gold-dark transition hover:text-qaid-navy">
+                                {{ trans('auth.forgot_password') }}
+                            </a>
+                        </div>
+                    </div>
 
-          <button
-            type="submit"
-            class="bg-orange-500 w-full cursor-pointer hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-xl shadow-lg hover:shadow-orange-500/50 transition-all duration-300"
-          >
-            {{ trans('auth.sign_in') ?? 'Sign in' }}
-          </button>
-        </form>
+                    <button
+                        type="submit"
+                        class="w-full rounded-full bg-qaid-navy px-8 py-4 font-black uppercase tracking-wider text-qaid-gold-text shadow-xl shadow-qaid-navy/20 transition hover:-translate-y-0.5 hover:bg-qaid-navy-hover focus:outline-none focus:ring-2 focus:ring-qaid-gold focus:ring-offset-2"
+                    >
+                        {{ trans('auth.sign_in') }}
+                    </button>
+                </form>
 
-        <div class="mt-6 text-center text-gray-400">
-          <p>
-            {{ trans('auth.no_account') ?? 'Need an account?' }}
-            <a href="{{ route('register') }}" class="text-white font-semibold hover:text-orange-300">{{ trans('auth.sign_up') ?? 'Register' }}</a>
-          </p>
-          <p class="mt-4 text-sm text-gray-500">
-            {{ trans('auth.admin_login_hint') ?? 'If you are an admin, use the admin panel login.' }}
-            <a href="/admin/login" class="text-orange-400 hover:text-orange-300">/admin/login</a>
-          </p>
+                <p class="mt-7 text-center text-slate-600">
+                    {{ trans('auth.no_account') }}
+                    <a href="{{ route('register') }}" class="font-black text-qaid-gold-dark transition hover:text-qaid-navy">
+                        {{ trans('auth.sign_up') }}
+                    </a>
+                </p>
+            </div>
         </div>
-      </div>
-    </div>
-   </div>
- </section>
-@endsection 
+    </section>
+@endsection

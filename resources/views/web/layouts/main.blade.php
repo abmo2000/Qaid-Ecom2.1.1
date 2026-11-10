@@ -49,15 +49,16 @@
 
         <script>
             (() => {
+                const isAccountPage = @json(request()->routeIs('account.*'));
                 try {
                     const storedTheme = localStorage.getItem('qaid_theme');
-                    const theme = storedTheme === 'light' ? 'light' : 'dark';
+                    const theme = isAccountPage || storedTheme === 'light' ? 'light' : 'dark';
 
                     document.documentElement.classList.toggle('theme-light', theme === 'light');
                     document.documentElement.dataset.theme = theme;
                 } catch (_) {
-                    document.documentElement.classList.remove('theme-light');
-                    document.documentElement.dataset.theme = 'dark';
+                    document.documentElement.classList.toggle('theme-light', isAccountPage);
+                    document.documentElement.dataset.theme = isAccountPage ? 'light' : 'dark';
                 }
             })();
         </script>
@@ -68,7 +69,7 @@
     
          @stack('styles_bottom')
     </head>
-    <body class="app-body">
+    <body class="app-body {{ request()->routeIs('account.*') ? 'account-page-body' : '' }}">
         @php
             $businessInfo = getBuisnessSettings('buisness-info');
             $vacationSettings = getVacationSettings();

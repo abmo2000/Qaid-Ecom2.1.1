@@ -15,8 +15,62 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
     --color-footer:#131313;
     --color-grey:#4d4747;
+    --color-qaid-cream: #f7f1e3;
+    --color-qaid-navy: #0d1b2a;
+    --color-qaid-navy-hover: #13283d;
+    --color-qaid-gold: #d8b35a;
+    --color-qaid-gold-dark: #b8913f;
+    --color-qaid-gold-text: #f7d879;
 
+}
 
+.qaid-page-background {
+    background-color: var(--color-qaid-cream);
+    background-image:
+        radial-gradient(circle at 18% 18%, rgba(216, 179, 90, .28), transparent 32%),
+        radial-gradient(circle at 84% 35%, rgba(13, 27, 42, .14), transparent 34%),
+        linear-gradient(135deg, #fffaf0 0%, #f4ead4 55%, #e7d5ad 100%);
+}
+
+.account-page-body {
+    background-color: var(--color-qaid-cream);
+    color-scheme: light;
+    --qaid-account-navbar-clearance: calc(0.75rem + 4rem);
+    --qaid-account-header-gap: 1.5rem;
+}
+
+.account-page-main {
+    padding-block-start: calc(var(--qaid-account-navbar-clearance) + var(--qaid-account-header-gap));
+    padding-block-end: 4rem;
+}
+
+@media (min-width: 640px) {
+    .account-page-body {
+        --qaid-account-navbar-clearance: calc(1rem + 4.5rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .account-page-body {
+        --qaid-account-navbar-clearance: calc(1rem + 5rem);
+        --qaid-account-header-gap: 2.5rem;
+    }
+}
+
+@keyframes account-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.account-fade-in {
+    animation: account-fade-in 250ms ease-out both;
 }
 
 @layer component{
@@ -301,6 +355,24 @@ section .container{
 button, a{
     cursor: pointer;
 }
+
+.auth-input-light {
+    border-color: #e2e8f0;
+    background-color: #ffffff;
+    color-scheme: light;
+    color: var(--color-qaid-navy);
+}
+
+.auth-input-light::placeholder {
+    color: #94a3b8;
+}
+
+.auth-input-light:focus {
+    border-color: var(--color-qaid-gold);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-qaid-gold) 30%, transparent);
+}
+
 .iti__country .iti__country-name,.iti__search-input{
     color: #000 !important;
 }

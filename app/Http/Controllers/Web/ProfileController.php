@@ -12,6 +12,7 @@ class ProfileController extends Controller
     {
         return view('web.account.profile', [
             'user' => Auth::user(),
+            'cities' => getCities(),
         ]);
     }
 }

@@ -71,7 +71,7 @@ Route::get('queue', ArtisanController::class)->middleware('secure');
 Route::middleware('auth')->group(function () {
      Route::get('dashboard/orders/{order}/invoice', OrderInvoiceController::class)->name('dashboard.orders.invoice');
 
-     Route::middleware(App\Http\Middleware\EnsureCustomer::class)->group(function () {
+     Route::middleware(['locale', App\Http\Middleware\EnsureCustomer::class])->group(function () {
          Route::prefix('account')->name('account.')->group(function () {
              Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
              Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');

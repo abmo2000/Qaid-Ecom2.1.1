@@ -13,11 +13,9 @@
     <x-navbar></x-navbar>
 
     <!-- QAID Hero -->
-    <section class="relative isolate overflow-hidden bg-[#f7f1e3] text-[#0d1b2a]">
+    <section class="relative isolate overflow-hidden bg-qaid-cream text-qaid-navy">
         <div class="absolute inset-0 -z-10">
-            <div
-                class="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(216,179,90,.28),transparent_32%),radial-gradient(circle_at_84%_35%,rgba(13,27,42,.14),transparent_34%),linear-gradient(135deg,#fffaf0_0%,#f4ead4_55%,#e7d5ad_100%)]">
-            </div>
+            <div class="qaid-page-background absolute inset-0"></div>
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d8b35a]/60 to-transparent">
             </div>
         </div>

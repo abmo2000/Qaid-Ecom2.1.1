@@ -1,9 +1,15 @@
-  @if ($errors->any())
-          <div class="mb-6 bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
-            <ul class="list-disc list-inside space-y-1">
-              @foreach ($errors->all() as $error)
-                <li class="text-sm text-white">{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
+@props(['tone' => 'dark'])
+
+@if ($errors->any())
+    <div @class([
+        'mb-6 rounded-xl border px-4 py-3',
+        'border-red-500 bg-red-900/20 text-red-400' => $tone === 'dark',
+        'border-red-200 bg-red-50 text-red-700' => $tone === 'light',
+    ])>
+        <ul class="list-inside list-disc space-y-1">
+            @foreach ($errors->all() as $error)
+                <li class="text-sm">{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
 @endif
