@@ -126,14 +126,18 @@
                 <div class="border-t border-qaid-gold/20 px-4 py-4">
                     <div class="space-y-3">
                         @forelse($checkoutItems as $item)
-                            @php($checkoutImage = $item['image'] ?? ($item['images'][0]->image ?? null))
+                            @php($checkoutImage = filled($item['image'] ?? null) ? $item['image'] : data_get($item, 'images.0.image'))
                             <div class="flex items-center gap-3">
-                                <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-qaid-gold/20 bg-slate-100 text-slate-400">
-                                    @if($checkoutImage)
-                                        <img src="{{ storage_image_url($checkoutImage) }}" alt="" class="h-full w-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                                        <i class="fas fa-image hidden" aria-hidden="true"></i>
+                                <div class="checkout-item-image flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-qaid-gold/20 bg-white text-slate-400">
+                                    @if($imageUrl = storage_image_url($checkoutImage))
+                                        <img src="{{ $imageUrl }}" alt="" class="h-full w-full object-contain p-1" onerror="this.hidden = true; this.nextElementSibling.hidden = false">
+                                        <span hidden class="flex h-full w-full items-center justify-center bg-slate-50">
+                                            <i class="fas fa-image" aria-hidden="true"></i>
+                                        </span>
                                     @else
-                                        <i class="fas fa-image" aria-hidden="true"></i>
+                                        <span class="flex h-full w-full items-center justify-center bg-slate-50">
+                                            <i class="fas fa-image" aria-hidden="true"></i>
+                                        </span>
                                     @endif
                                 </div>
                                 <div class="min-w-0 flex-1 text-start">
@@ -439,14 +443,18 @@
 
                     <div class="max-h-72 space-y-4 overflow-y-auto pe-1">
                         @forelse($checkoutItems as $item)
-                            @php($checkoutImage = $item['image'] ?? ($item['images'][0]->image ?? null))
+                            @php($checkoutImage = filled($item['image'] ?? null) ? $item['image'] : data_get($item, 'images.0.image'))
                             <div class="flex items-center gap-3">
-                                <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-qaid-gold/20 bg-slate-100 text-slate-400">
-                                    @if($checkoutImage)
-                                        <img src="{{ storage_image_url($checkoutImage) }}" alt="" class="h-full w-full object-cover" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden')">
-                                        <i class="fas fa-image hidden" aria-hidden="true"></i>
+                                <div class="checkout-item-image flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-qaid-gold/20 bg-white text-slate-400">
+                                    @if($imageUrl = storage_image_url($checkoutImage))
+                                        <img src="{{ $imageUrl }}" alt="" class="h-full w-full object-contain p-1" onerror="this.hidden = true; this.nextElementSibling.hidden = false">
+                                        <span hidden class="flex h-full w-full items-center justify-center bg-slate-50">
+                                            <i class="fas fa-image" aria-hidden="true"></i>
+                                        </span>
                                     @else
-                                        <i class="fas fa-image" aria-hidden="true"></i>
+                                        <span class="flex h-full w-full items-center justify-center bg-slate-50">
+                                            <i class="fas fa-image" aria-hidden="true"></i>
+                                        </span>
                                     @endif
                                 </div>
                                 <div class="min-w-0 flex-1 text-start">
