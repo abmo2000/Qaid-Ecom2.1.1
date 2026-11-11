@@ -243,12 +243,6 @@
                             </div>
                             <div class="swiper-pagination products-swiper-pagination"></div>
                         </div>
-                        <div class="mt-12 flex justify-center">
-                            <a href="{{ route('offers.index') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-[#d8b35a] px-7 py-3.5 text-sm font-black uppercase tracking-wider text-[#0d1b2a] shadow-lg transition duration-200 hover:-translate-y-0.5 hover:bg-[#f7d879] focus:outline-none focus:ring-4 focus:ring-[#d8b35a]/30">
-                                {{ __('home.view-all-offers') }}
-                                <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                            </a>
-                        </div>
                     </div>
                 @empty
                     <p class="text-center text-white/65">No products available right now.</p>
