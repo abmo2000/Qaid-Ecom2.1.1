@@ -40,6 +40,7 @@
     .app-body {
         --qaid-navbar-clearance: calc(1rem + 5rem);
         --qaid-page-intro-gap: 2.5rem;
+        --offers-toolbar-height: 3.875rem;
     }
 }
 
@@ -889,6 +890,10 @@
 }
 
 @media (min-width: 1024px) {
+    .offers-toolbar {
+        z-index: 20;
+    }
+
     .offers-mobile-toolbar {
         display: none;
     }
@@ -952,6 +957,12 @@
         grid-template-columns: 260px minmax(0, 1fr);
         align-items: start;
         gap: 1.25rem;
+        margin-block-start: 1.5rem;
+    }
+
+    .offers-sidebar {
+        inset-block-start: calc(var(--qaid-navbar-clearance) + var(--offers-toolbar-height) + 1rem);
+        max-block-size: calc(100dvh - var(--qaid-navbar-clearance) - var(--offers-toolbar-height) - 1rem - 1.5rem);
     }
 
     .offers-autosubmit-enabled .offers-filter-submit-desktop {
