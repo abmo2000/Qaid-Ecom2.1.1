@@ -82,7 +82,7 @@ $itemsSubtotal = $cartItems->sum(fn($item) => $item['price'] * $item['quantity']
             // Apply coupon discount if a valid code was provided
             $couponId = null;
             $adminCreatorId = null;
-            if (! empty($data['coupon_code'])) {
+            if (config('checkout.coupons_enabled', false) && ! empty($data['coupon_code'])) {
                 $couponCode = strtoupper(trim((string) $data['coupon_code']));
 
                 $coupon = Coupon::query()

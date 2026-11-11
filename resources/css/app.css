@@ -99,6 +99,18 @@
     color-scheme: light;
 }
 
+.checkout-page-body {
+    background-color: var(--color-qaid-cream);
+    color-scheme: light;
+}
+
+@media (min-width: 1024px) {
+    .checkout-summary-sticky {
+        position: sticky;
+        top: calc(var(--qaid-navbar-clearance) + 1.5rem);
+    }
+}
+
 @keyframes account-fade-in {
     from {
         opacity: 0;

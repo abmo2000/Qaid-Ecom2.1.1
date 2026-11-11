@@ -14,6 +14,13 @@ class CouponValidateController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
+        if (! config('checkout.coupons_enabled', false)) {
+            return response()->json([
+                'valid' => false,
+                'message' => __('checkout.coupons_unavailable'),
+            ], 404);
+        }
+
         $request->validate(['code' => 'required|string|max:100']);
 
         $couponCode = strtoupper(trim((string) $request->input('code')));

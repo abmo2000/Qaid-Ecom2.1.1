@@ -1,6 +1,5 @@
-// Checkout form Alpine.js component
-document.addEventListener("alpine:init", () => {
-    Alpine.data('checkoutForm', (total = 0, userData = {}, hasDeliveryOption = false) => ({
+document.addEventListener('alpine:init', () => {
+    Alpine.data('checkoutForm', (total = 0, userData = {}, hasDeliveryOption = false, couponsEnabled = false) => ({
         form: {
             name: userData.name || '',
             email: userData.email || '',
@@ -9,11 +8,9 @@ document.addEventListener("alpine:init", () => {
             city_id: userData.city_id || '',
             insta_account: userData.insta_account || '',
             delivery_option: '',
-            payment_method: '',
+            payment_method: 'cash_on_delivery',
             payment_proof: null,
-            proofPreviewUrl: '',
-            dragOver: false,
-            notes: ''
+            notes: '',
         },
         coupon: {
             code: '',
@@ -32,53 +29,52 @@ document.addEventListener("alpine:init", () => {
             delivery_option: '',
             payment_method: '',
             payment_proof: '',
-             insta_account: '',
+            insta_account: '',
         },
-        total: total,
+        total,
         deliveryPrice: 0,
         selectedCityHasDiscussion: false,
         showDeliveryOptions: false,
-        hasDeliveryOption: hasDeliveryOption,
+        hasDeliveryOption,
+        couponsEnabled,
+        validation: userData.validation || {},
         loading: false,
         success: false,
-        isFirstOrder: userData.isFirstOrder,
+        serverError: '',
+        isFirstOrder: Boolean(userData.isFirstOrder),
         orderId: '',
-        
+
         init() {
             this.checkCityDeliveryOptions();
         },
 
-        setupPhoneInput() {
-            return;
+        message(key) {
+            return this.validation[key] || key;
         },
 
-       checkCityDeliveryOptions() {
-        this.$refs.citySelect.value = this.form.city_id || '';
-        const selectedOption = this.$refs.citySelect.selectedOptions[0];
-        if (!selectedOption || !selectedOption.value) {
-            this.showDeliveryOptions = false;
-            this.selectedCityHasDiscussion = false;
-            this.deliveryPrice = 0;
-            this.form.delivery_option = '';
-            return;
-    }
+        checkCityDeliveryOptions() {
+            this.$refs.citySelect.value = this.form.city_id || '';
+            const selectedOption = this.$refs.citySelect.selectedOptions[0];
+            if (!selectedOption || !selectedOption.value) {
+                this.showDeliveryOptions = false;
+                this.selectedCityHasDiscussion = false;
+                this.deliveryPrice = 0;
+                this.form.delivery_option = '';
+                return;
+            }
 
-    const hasDiscussion = selectedOption.dataset.hasDiscussion === 'true';
-    const deliveryPrice = parseFloat(selectedOption.dataset.deliveryPrice) || 0;
+            this.selectedCityHasDiscussion = selectedOption.dataset.hasDiscussion === 'true';
+            this.deliveryPrice = parseFloat(selectedOption.dataset.deliveryPrice) || 0;
+            this.showDeliveryOptions = true;
 
-    this.selectedCityHasDiscussion = hasDiscussion;
-    this.deliveryPrice = deliveryPrice;
-    this.showDeliveryOptions = true;
-
-    if (hasDiscussion) {
-        this.form.delivery_option = '';
-        this.errors.delivery_option = '';
-    } else {
-        this.form.delivery_option = 'proceed';
-        this.errors.delivery_option = '';
-    }
-},
-
+            if (this.selectedCityHasDiscussion) {
+                this.form.delivery_option = '';
+                this.errors.delivery_option = '';
+            } else {
+                this.form.delivery_option = 'proceed';
+                this.errors.delivery_option = '';
+            }
+        },
 
         onCityChange() {
             this.validateField('city_id');
@@ -86,58 +82,26 @@ document.addEventListener("alpine:init", () => {
         },
 
         setPaymentProof(event) {
-            const file = event.target.files?.[0] || null;
-            this.form.payment_proof = file;
-            this.updateProofPreview(file);
-            this.dragOver = false;
-        },
-
-        handleDrop(event) {
-            this.dragOver = false;
-            const file = event.dataTransfer?.files?.[0] || null;
-            if (file) {
-                this.form.payment_proof = file;
-                this.updateProofPreview(file);
-                this.validateField('payment_proof');
-            }
-        },
-
-        updateProofPreview(file) {
-            if (!file || !file.type?.startsWith('image/')) {
-                this.proofPreviewUrl = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                this.proofPreviewUrl = event.target?.result || '';
-            };
-            reader.readAsDataURL(file);
+            this.form.payment_proof = event.target.files?.[0] || null;
+            this.validateField('payment_proof');
         },
 
         shouldShowDeliveryFee() {
-            // Show delivery fee breakdown if:
-            // 1. User selected "proceed" option (for cities with discussion)
-            // 2. City doesn't have discussion (auto-added delivery)
-            return this.deliveryPrice > 0 && 
-                   (this.form.delivery_option !== 'discuss' || 
-                   (this.showDeliveryOptions && !this.selectedCityHasDiscussion));
+            return this.deliveryPrice > 0
+                && (this.form.delivery_option !== 'discuss'
+                    || (this.showDeliveryOptions && !this.selectedCityHasDiscussion));
         },
 
         calculateTotal() {
             let finalTotal = this.total;
-            
-            // Add delivery price if:
-            // 1. User selected "proceed" option
-            // 2. OR city doesn't have discussion (auto-added)
+
             if (this.shouldShowDeliveryFee()) {
                 finalTotal += this.deliveryPrice;
             }
-            if(finalTotal > this.total && this.isFirstOrder){
-                finalTotal -= this.deliveryPrice
+            if (finalTotal > this.total && this.isFirstOrder) {
+                finalTotal -= this.deliveryPrice;
             }
 
-            // Subtract coupon discount (applied on the items subtotal)
             finalTotal -= this.couponDiscount();
 
             return Math.max(0, finalTotal);
@@ -149,9 +113,11 @@ document.addEventListener("alpine:init", () => {
         },
 
         async applyCoupon() {
+            if (!this.couponsEnabled) return;
+
             const code = this.coupon.code.trim();
             if (!code) {
-                this.coupon.error = 'Please enter a coupon code.';
+                this.coupon.error = this.message('coupon_required');
                 return;
             }
 
@@ -159,19 +125,16 @@ document.addEventListener("alpine:init", () => {
             this.coupon.error = '';
 
             try {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ||
-                                  document.querySelector('input[name="_token"]')?.value;
-
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 const response = await fetch('/coupon/validate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json',
+                        Accept: 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
                     body: JSON.stringify({ code }),
                 });
-
                 const data = await response.json();
 
                 if (response.ok && data.valid) {
@@ -182,128 +145,111 @@ document.addEventListener("alpine:init", () => {
                 } else {
                     this.coupon.applied = false;
                     this.coupon.discountPercentage = 0;
-                    this.coupon.error = data.message || data.errors?.code?.[0] || 'Invalid coupon code.';
+                    this.coupon.error = data.message || this.message('coupon_invalid');
                 }
-            } catch (e) {
-                this.coupon.error = 'Network error. Please try again.';
+            } catch (error) {
+                this.coupon.error = this.message('network_error');
             } finally {
                 this.coupon.loading = false;
             }
         },
 
         removeCoupon() {
+            if (!this.couponsEnabled) return;
             this.coupon.applied = false;
             this.coupon.code = '';
             this.coupon.discountPercentage = 0;
             this.coupon.message = '';
             this.coupon.error = '';
         },
-        
+
         validateField(field) {
             this.errors[field] = '';
-            
-            switch(field) {
+
+            switch (field) {
                 case 'name':
                     if (!this.form.name.trim()) {
-                        this.errors.name = 'Full name is required';
+                        this.errors.name = this.message('name_required');
                     } else if (this.form.name.trim().length < 3) {
-                        this.errors.name = 'Full name must be at least 3 characters';
+                        this.errors.name = this.message('name_min');
                     }
                     break;
-                    
                 case 'email':
                     if (!this.form.email.trim()) {
-                        this.errors.email = 'Email address is required';
+                        this.errors.email = this.message('email_required');
                     } else if (!this.isValidEmail(this.form.email)) {
-                        this.errors.email = 'Please enter a valid email address';
+                        this.errors.email = this.message('email_invalid');
                     }
                     break;
-                    
                 case 'phone':
-                     
                     if (!this.form.phone.trim()) {
-                        this.errors.phone = 'Phone number is required';
-                    } else if (!this.isValidPhone(this.form.phone)) {
-                        this.errors.phone = 'Please enter a valid phone number (begin with +20)';
+                        this.errors.phone = this.message('phone_required');
                     }
                     break;
-                    
                 case 'address':
                     if (!this.form.address.trim()) {
-                        this.errors.address = 'Address is required';
+                        this.errors.address = this.message('address_required');
                     } else if (this.form.address.trim().length < 10) {
-                        this.errors.address = 'Please provide a detailed address';
+                        this.errors.address = this.message('address_min');
                     }
                     break;
-                    
                 case 'city_id':
                     if (!this.form.city_id) {
-                        this.errors.city_id = 'Please select a city';
+                        this.errors.city_id = this.message('city_required');
                     }
                     break;
-                    
+                case 'delivery_option':
+                    if (this.showDeliveryOptions && this.selectedCityHasDiscussion && !this.form.delivery_option) {
+                        this.errors.delivery_option = this.message('delivery_option_required');
+                    }
+                    break;
                 case 'payment_method':
                     if (!this.form.payment_method) {
-                        this.errors.payment_method = 'Please select a payment method';
+                        this.errors.payment_method = this.message('payment_method_required');
                     }
                     break;
-
                 case 'payment_proof':
-                    if (this.form.payment_method === 'instapay' && !this.form.payment_proof) {
-                        this.errors.payment_proof = 'Please upload the transfer proof for the 20% guarantee payment.';
-                    } else {
-                        this.errors.payment_proof = '';
-                    }
+                    this.errors.payment_proof = this.form.payment_method === 'instapay' && !this.form.payment_proof
+                        ? this.message('payment_proof_required')
+                        : '';
                     break;
-               
             }
         },
-        
+
         validateAll() {
-            this.validateField('name');
-            this.validateField('email');
-            this.validateField('phone');
-            this.validateField('address');
-            this.validateField('city_id');
-            
-            // Only validate delivery option if city has discussion option
+            ['name', 'email', 'phone', 'address', 'city_id', 'payment_method'].forEach((field) => {
+                this.validateField(field);
+            });
+
             if (this.showDeliveryOptions && this.selectedCityHasDiscussion) {
                 this.validateField('delivery_option');
             }
-            
-            this.validateField('payment_method');
             this.validateField('payment_proof');
-            
-            return !Object.values(this.errors).some(error => error !== '');
+
+            return !Object.values(this.errors).some((error) => error !== '');
         },
-        
+
         isValidEmail(email) {
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return regex.test(email);
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         },
-        
-        isValidPhone(phone) {
-           return true;
-        },
-        
+
         async submitOrder() {
-            // Validate all fields
+            if (this.loading || this.success) return;
+            this.serverError = '';
+
             if (!this.validateAll()) {
-                // Scroll to first error
-                const firstError = document.querySelector('.text-red-500');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                await this.$nextTick();
+                document.querySelector('[aria-invalid="true"]')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
                 return;
             }
-            
-            this.loading = true;
-            this.success = false;
-            
-            try {
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || 
-                                document.querySelector('input[name="_token"]')?.value;
 
+            this.loading = true;
+
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 const formData = new FormData();
                 formData.append('name', this.form.name);
                 formData.append('email', this.form.email);
@@ -312,75 +258,61 @@ document.addEventListener("alpine:init", () => {
                 formData.append('city_id', this.form.city_id);
                 formData.append('delivery_option', this.form.delivery_option || 'proceed');
                 formData.append('payment_method', this.form.payment_method);
-                formData.append('insta_account', this.form.insta_account);
                 formData.append('notes', this.form.notes);
-                formData.append('coupon_code', this.coupon.applied ? this.coupon.code.trim().toUpperCase() : '');
-                if (this.form.payment_proof) {
-                    formData.append('payment_proof', this.form.payment_proof);
+
+                if (this.couponsEnabled && this.coupon.applied) {
+                    formData.append('coupon_code', this.coupon.code.trim().toUpperCase());
                 }
-                
+                if (this.form.payment_method === 'instapay') {
+                    formData.append('insta_account', this.form.insta_account);
+                    if (this.form.payment_proof) {
+                        formData.append('payment_proof', this.form.payment_proof);
+                    }
+                }
+
                 const response = await fetch('/order', {
                     method: 'POST',
                     headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: formData
+                    body: formData,
                 });
-                
                 const data = await response.json();
-             
-                if (response.ok) {
-                    this.success = true;
-                    this.orderId = data.order_id || data.id || 'N/A';
-                    
-                    // Scroll to success message
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    
-                    // Handle redirect based on payment method
-                    setTimeout(() => {
-                        if(data.payment_method === 'instapay'){
-                           window.open(userData.instapay, '_blank');
-                        }
-                        
-                        // Redirect to order confirmation page or reload
-                        if (data.redirect_url) {
-                            window.location.href = data.redirect_url;
-                        } else {
-                            window.location.reload();
-                        }
-                         
-                    }, 2000);
-                    
-                } else {
-                    // Handle validation errors from server
+
+                if (!response.ok) {
                     if (data.errors) {
-                        Object.keys(data.errors).forEach(key => {
-                            if (this.errors.hasOwnProperty(key)) {
-                                this.errors[key] = Array.isArray(data.errors[key]) 
-                                    ? data.errors[key][0] 
-                                    : data.errors[key];
+                        Object.entries(data.errors).forEach(([key, messages]) => {
+                            if (Object.prototype.hasOwnProperty.call(this.errors, key)) {
+                                this.errors[key] = Array.isArray(messages) ? messages[0] : messages;
                             }
                         });
-                        
-                        // Scroll to first error
-                        setTimeout(() => {
-                            const firstError = document.querySelector('.text-red-500');
-                            if (firstError) {
-                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 100);
                     } else {
-                        alert(data.message || 'An error occurred. Please try again.');
+                        this.serverError = data.message || this.message('order_error');
                     }
+                    await this.$nextTick();
+                    document.querySelector('[aria-invalid="true"]')?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                    });
+                    return;
                 }
-                
+
+                this.success = true;
+                this.orderId = data.order_id || data.id || '';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                window.setTimeout(() => {
+                    if (data.payment_method === 'instapay' && userData.instapay) {
+                        window.open(userData.instapay, '_blank', 'noopener');
+                    }
+                    window.location.href = data.redirect_url || window.location.href;
+                }, 1500);
             } catch (error) {
-                console.error('Error submitting order:', error);
-                alert('Network error. Please check your connection and try again.');
+                this.serverError = this.message('network_error');
             } finally {
-                this.loading = false;
+                if (!this.success) this.loading = false;
             }
-        }
+        },
     }));
 });

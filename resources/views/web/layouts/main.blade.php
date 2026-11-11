@@ -52,16 +52,16 @@
 
         <script>
             (() => {
-                const isAccountPage = @json(request()->routeIs('account.*'));
+                const isLightPage = @json(request()->routeIs('account.*') || request()->routeIs('checkout'));
                 try {
                     const storedTheme = localStorage.getItem('qaid_theme');
-                    const theme = isAccountPage || storedTheme === 'light' ? 'light' : 'dark';
+                    const theme = isLightPage || storedTheme === 'light' ? 'light' : 'dark';
 
                     document.documentElement.classList.toggle('theme-light', theme === 'light');
                     document.documentElement.dataset.theme = theme;
                 } catch (_) {
-                    document.documentElement.classList.toggle('theme-light', isAccountPage);
-                    document.documentElement.dataset.theme = isAccountPage ? 'light' : 'dark';
+                    document.documentElement.classList.toggle('theme-light', isLightPage);
+                    document.documentElement.dataset.theme = isLightPage ? 'light' : 'dark';
                 }
             })();
         </script>
@@ -72,7 +72,7 @@
     
          @stack('styles_bottom')
     </head>
-    <body class="app-body {{ request()->routeIs('account.*') ? 'account-page-body' : '' }}">
+    <body class="app-body {{ request()->routeIs('account.*') ? 'account-page-body' : '' }} {{ request()->routeIs('checkout') ? 'checkout-page-body' : '' }}">
         @php
             $businessInfo = getBuisnessSettings('buisness-info');
             $vacationSettings = getVacationSettings();
@@ -102,8 +102,8 @@
 
         @yield('content')
 
-        @unless(request()->routeIs('offers.*'))
-        <div class="fixed bottom-5 right-5 z-[9999] flex flex-col items-center gap-[10px]" style="position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        @unless(request()->routeIs('offers.*') || request()->routeIs('checkout'))
+        <div class="fixed bottom-5 right-5 z-[9999] flex flex-col items-center gap-[10px]">
             <a
                 href="{{ $whatsappLink }}"
                 target="_blank"
