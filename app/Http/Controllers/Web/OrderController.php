@@ -20,13 +20,20 @@ class OrderController extends Controller
     public function index(){
        
       $total =  $this->service->getTotal();
+      $items = $this->service->getItems();
       $orderSettings = getBuisnessSettings('order_settings');
       $buisnessSettings = getBuisnessSettings('buisness-info');
       $isUserFirstOrderDeliveryFree = Auth::check()
       && ($orderSettings?->allow_first_order_for_free)
       && !Auth::user()->orders()->exists();
      
-        return view('web.pages.checkout')->with(['total' => $total ,  'orderSettings' => $orderSettings , 'buisnessSettings' => $buisnessSettings , 'isFirstOrder' => $isUserFirstOrderDeliveryFree]);
+        return view('web.pages.checkout')->with([
+            'total' => $total,
+            'items' => $items,
+            'orderSettings' => $orderSettings,
+            'buisnessSettings' => $buisnessSettings,
+            'isFirstOrder' => $isUserFirstOrderDeliveryFree,
+        ]);
 
     }
     public function store(OrderCreateReq $request): Response
@@ -45,9 +52,23 @@ class OrderController extends Controller
 
         $data = $request->validated();
 
-        if ($request->hasFile('payment_proof')) {
+        if (! config('checkout.instapay_enabled', false) && $request->input('payment_method') === 'instapay') {
+            $message = __('checkout.validation.payment_method_invalid');
+
+            return response()->json([
+                'message' => $message,
+                'errors' => ['payment_method' => [$message]],
+            ], 433);
+        }
+
+        if (! config('checkout.coupons_enabled', false)) {
+            unset($data['coupon_code']);
+        }
+
+        if (config('checkout.instapay_enabled', false) && ($data['payment_method'] ?? null) === 'instapay' && $request->hasFile('payment_proof')) {
             $data['payment_proof_path'] = $request->file('payment_proof')->store('orders/payment-proofs', 'public');
         }
+        unset($data['payment_proof']);
 
         $data['payment_status'] = ($data['payment_method'] ?? null) === 'instapay'
             ? (! empty($data['payment_proof_path']) ? 'pending' : 'not_paid')

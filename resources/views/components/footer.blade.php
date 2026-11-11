@@ -64,26 +64,28 @@
                     <i class="fab fa-instagram text-lg"></i>
                 </a>
 
-                <a href={{ "https://wa.me/+20" . getBuisnessSettings('buisness-info')?->whatsapp_number }}
-                    target="_blank"
-                    rel="noopener"
-                    class="flex h-11 w-11 items-center justify-center rounded-full border border-[#d8b35a]/30 bg-white/5 text-[#f7d879] transition hover:-translate-y-1 hover:border-[#d8b35a] hover:bg-[#f7d879] hover:text-[#0d1b2a]"
-                    aria-label="WhatsApp"
-                >
-                    <i class="fab fa-whatsapp text-lg"></i>
-                </a>
-
-                @if(!empty($telegramRaw))
-                    <a
-                        href="{{ $telegramLink }}"
+                @unless(request()->routeIs('offers.*'))
+                    <a href={{ "https://wa.me/+20" . getBuisnessSettings('buisness-info')?->whatsapp_number }}
                         target="_blank"
                         rel="noopener"
                         class="flex h-11 w-11 items-center justify-center rounded-full border border-[#d8b35a]/30 bg-white/5 text-[#f7d879] transition hover:-translate-y-1 hover:border-[#d8b35a] hover:bg-[#f7d879] hover:text-[#0d1b2a]"
-                        aria-label="Telegram"
+                        aria-label="WhatsApp"
                     >
-                        <i class="fab fa-telegram-plane text-lg"></i>
+                        <i class="fab fa-whatsapp text-lg"></i>
                     </a>
-                @endif
+
+                    @if(!empty($telegramRaw))
+                        <a
+                            href="{{ $telegramLink }}"
+                            target="_blank"
+                            rel="noopener"
+                            class="flex h-11 w-11 items-center justify-center rounded-full border border-[#d8b35a]/30 bg-white/5 text-[#f7d879] transition hover:-translate-y-1 hover:border-[#d8b35a] hover:bg-[#f7d879] hover:text-[#0d1b2a]"
+                            aria-label="Telegram"
+                        >
+                            <i class="fab fa-telegram-plane text-lg"></i>
+                        </a>
+                    @endif
+                @endunless
             </div>
         </div>
 

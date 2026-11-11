@@ -13,11 +13,9 @@
     <x-navbar></x-navbar>
 
     <!-- QAID Hero -->
-    <section class="relative isolate overflow-hidden bg-[#f7f1e3] text-[#0d1b2a]">
+    <section class="relative isolate overflow-hidden bg-qaid-cream text-qaid-navy">
         <div class="absolute inset-0 -z-10">
-            <div
-                class="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(216,179,90,.28),transparent_32%),radial-gradient(circle_at_84%_35%,rgba(13,27,42,.14),transparent_34%),linear-gradient(135deg,#fffaf0_0%,#f4ead4_55%,#e7d5ad_100%)]">
-            </div>
+            <div class="qaid-page-background absolute inset-0"></div>
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d8b35a]/60 to-transparent">
             </div>
         </div>
@@ -50,7 +48,7 @@
                     </a>
 
 
-                    <a href="#fearured-products"
+                    <a href="#featured-products"
                         class="inline-flex items-center justify-center rounded-full border border-[#b8913f]/40 bg-white/70 px-6 py-3.5 text-sm font-black uppercase tracking-wider text-[#0d1b2a] shadow-sm backdrop-blur transition hover:border-[#b8913f] hover:text-[#9b762f] md:px-7 md:py-4">
                         Explore Products
                     </a>
@@ -216,7 +214,7 @@
     </div>
 </section>
     <!-- Featured Products -->
-    <section id="fearured-products" class="bg-[#0d1b2a] py-16 text-white md:py-24">
+    <section id="featured-products" class="bg-[#0d1b2a] py-16 text-white md:py-24">
        <div class="w-full px-4">
             <h2 class="mb-3 text-center text-4xl font-black uppercase tracking-wide text-[#f7d879] md:text-5xl">
                 {{ trans('home.featured-products') }}</h2>

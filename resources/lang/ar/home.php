@@ -13,6 +13,7 @@ return [
 'about-products-section' => 'عن منتجاتنا',
 'discover-natura' => 'اكتشف ناتورا كابيلي',
 'featured-products' => 'المنتجات المميزة',
+'view-all-offers' => 'عرض كل العروض',
 'discover-products' => 'اكتشف منتجانتا',
 'we-support-your-choice' => 'نحن ندعم اختيارك',
     'shop.specs' => 'الكمية المتاحة',

@@ -12,6 +12,9 @@ return [
     // Cart items
     'price' => 'Price',
     'items' => 'Items',
+    'remove_item' => 'Remove item',
+    'increase_quantity' => 'Increase quantity',
+    'decrease_quantity' => 'Decrease quantity',
 
     // Order summary
     'order_summary' => 'Order Summary',

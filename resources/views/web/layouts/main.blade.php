@@ -41,6 +41,9 @@
         @endif
 
         @stack('meta')
+        @if (!empty($seo['canonical']))
+            <link rel="canonical" href="{{ $seo['canonical'] }}">
+        @endif
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Kurale&display=swap" rel="stylesheet">
@@ -49,15 +52,16 @@
 
         <script>
             (() => {
+                const isLightPage = @json(request()->routeIs('account.*') || request()->routeIs('checkout'));
                 try {
                     const storedTheme = localStorage.getItem('qaid_theme');
-                    const theme = storedTheme === 'light' ? 'light' : 'dark';
+                    const theme = isLightPage || storedTheme === 'light' ? 'light' : 'dark';
 
                     document.documentElement.classList.toggle('theme-light', theme === 'light');
                     document.documentElement.dataset.theme = theme;
                 } catch (_) {
-                    document.documentElement.classList.remove('theme-light');
-                    document.documentElement.dataset.theme = 'dark';
+                    document.documentElement.classList.toggle('theme-light', isLightPage);
+                    document.documentElement.dataset.theme = isLightPage ? 'light' : 'dark';
                 }
             })();
         </script>
@@ -68,7 +72,7 @@
     
          @stack('styles_bottom')
     </head>
-    <body class="app-body">
+    <body class="app-body {{ request()->routeIs('account.*') ? 'account-page-body' : '' }} {{ request()->routeIs('checkout') ? 'checkout-page-body' : '' }}">
         @php
             $businessInfo = getBuisnessSettings('buisness-info');
             $vacationSettings = getVacationSettings();
@@ -98,7 +102,8 @@
 
         @yield('content')
 
-        <div class="fixed bottom-5 right-5 z-[9999] flex flex-col items-center gap-[10px]" style="position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        @unless(request()->routeIs('offers.*') || request()->routeIs('checkout'))
+        <div class="fixed bottom-5 right-5 z-[9999] flex flex-col items-center gap-[10px]">
             <a
                 href="{{ $whatsappLink }}"
                 target="_blank"
@@ -125,6 +130,7 @@
                 </a>
             @endif
         </div>
+        @endunless
 
         <x-flash-message></x-flash-message>
         <x-footer></x-footer>

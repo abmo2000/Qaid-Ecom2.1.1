@@ -16,7 +16,7 @@
                     <svg class="w-5 h-5 me-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                     </svg>
-                    <span>{{ trans('login_success') }}</span>
+                    <span>{{ trans('auth.login_success') }}</span>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                     :class="loading ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'bg-[#d8b35a] hover:bg-[#f7d879] text-[#0d1b2a]'"
                     class="w-full cursor-pointer font-black uppercase tracking-wider py-3.5 px-10 rounded-xl shadow-lg hover:shadow-[#d8b35a]/40 transition-all duration-300 transform hover:scale-[1.02]"
                 >
-                    <span x-show="!loading">Sign In</span>
+                    <span x-show="!loading">{{ trans('auth.sign_in') }}</span>
                     <span x-show="loading" class="flex items-center justify-center">
                         <svg class="animate-spin h-5 w-5 me-2" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

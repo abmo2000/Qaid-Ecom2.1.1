@@ -5,8 +5,9 @@ return [
   'about' => 'من نحن',
   'shop' => 'المنتجات',
   'contact' => 'تواصل معنا',
+  'terms' => 'الشروط والأحكام',
   'routine' => 'روتين',
-  'featured-products' => 'المنتجات المميزة',
+  'best-offers' => 'أفضل العروض',
   'concepts' => 'مبادئنا',
       'shop.specs' => 'الكمية المتاحة',
 ];

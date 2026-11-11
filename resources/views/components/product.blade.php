@@ -3,9 +3,12 @@
 @php($stockValue = data_get($product, 'stock', 0))
 @php($isProductInStock = data_get($product, 'in_stock', true) && ($stockValue === null || $stockValue > 0))
 @php($maxProductStock = $stockValue === null ? 99 : $stockValue)
+@php($isOfferLayout = $layout === 'offer')
 @php($cardClasses = $layout === 'grid'
     ? 'product-card group cursor-pointer w-full !overflow-hidden !rounded-[1.75rem] !border !border-[#d8b35a]/25 !bg-[#fbf6e8] !shadow-[0_24px_70px_rgba(0,0,0,.22)] transition duration-300 hover:!-translate-y-2 hover:!shadow-[0_32px_90px_rgba(0,0,0,.30)]'
-    : 'product-card group cursor-pointer w-[78vw] sm:w-[300px] md:w-[280px] lg:w-[300px] xl:w-[320px] !overflow-hidden !rounded-[1.75rem] !border !border-[#d8b35a]/25 !bg-[#fbf6e8] !shadow-[0_24px_70px_rgba(0,0,0,.22)] transition duration-300 hover:!-translate-y-2 hover:!shadow-[0_32px_90px_rgba(0,0,0,.30)]')
+    : ($isOfferLayout
+        ? 'product-card group cursor-pointer w-full !overflow-hidden !rounded-[1.75rem] !border !border-[#d8b35a]/35 !bg-white !shadow-[0_22px_55px_rgba(13,27,42,.10)] transition duration-200 hover:!-translate-y-1 hover:!shadow-[0_30px_70px_rgba(13,27,42,.16)]'
+        : 'product-card group cursor-pointer w-[78vw] sm:w-[300px] md:w-[280px] lg:w-[300px] xl:w-[320px] !overflow-hidden !rounded-[1.75rem] !border !border-[#d8b35a]/25 !bg-[#fbf6e8] !shadow-[0_24px_70px_rgba(0,0,0,.22)] transition duration-300 hover:!-translate-y-2 hover:!shadow-[0_32px_90px_rgba(0,0,0,.30)]'))
 @if($type === 'trial')
 <div class="{{ $cardClasses }}" x-data="productCard('trial', {{ $product->id }}, {{ $isProductInStock ? 'true' : 'false' }}, {{ $maxProductStock }})">
 @else
@@ -28,8 +31,8 @@
         @endunless
 
         @if($product->hasSale())
-            <div class="pointer-events-none absolute start-4 top-4 z-20 rounded-full bg-[#9b1c1c] px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg">
-                {{ trans('shop.sale') }}
+            <div class="pointer-events-none absolute start-4 top-4 z-20 rounded-full bg-offer px-3 py-1.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-lg">
+                {{ $isOfferLayout ? '-'.$product->discount_percentage.'%' : trans('shop.sale') }}
             </div>
         @endif
 
@@ -88,7 +91,10 @@
         </a>
 
         <div class="mt-4 flex min-h-8 flex-wrap items-center justify-center gap-3">
-            @if($product->hasSale())
+            @if($product->hasSale() && $isOfferLayout)
+                <span class="text-base font-bold text-slate-400 line-through">{{ $product->price }} EGP</span>
+                <span class="text-xl font-black text-offer">{{ $product?->sale?->sale_price . ' EGP' }}</span>
+            @elseif($product->hasSale())
                 <span class="relative text-base font-bold text-[#7b8190]">
                     <span class="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <span class="absolute h-[2px] w-full origin-center rotate-[-18deg] bg-[#7b8190]"></span>
@@ -102,5 +108,8 @@
                 <span class="text-xl font-black text-[#0d1b2a]">{{ $product->price . ' EGP' }}</span>
             @endif
         </div>
+        @if($product->hasSale() && $isOfferLayout)
+            <p class="mt-2 text-sm font-bold text-offer">{{ __('offers.you_save', ['amount' => number_format($product->amount_saved)]) }}</p>
+        @endif
     </div>
 </div>

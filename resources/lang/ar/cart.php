@@ -12,6 +12,9 @@ return [
     // Cart items
     'price' => 'السعر',
     'items' => 'عدد المنتجات',
+    'remove_item' => 'حذف المنتج',
+    'increase_quantity' => 'زيادة الكمية',
+    'decrease_quantity' => 'تقليل الكمية',
 
     // Order summary
     'order_summary' => 'ملخص الطلب',

@@ -6,33 +6,37 @@
     'required' => false,
     'value' => '',
     'autofocus' => false,
+    'labelClass' => 'text-white',
+    'toggleClass' => 'text-zinc-400 hover:text-white',
+    'errorClass' => 'text-red-400',
 ])
 
 <div>
-    <label for="{{ $name }}" class="block text-sm font-medium text-white mb-2">
+    <label for="{{ $name }}" class="mb-2 block text-sm font-medium {{ $labelClass }}">
         {{ $label }}
         @if($required)
             <span class="text-red-500">*</span>
         @endif
     </label>
-    
+
     @if($type === 'password')
         <div x-data="{ show: false }" class="relative">
-            <input 
+            <input
                 :type="show ? 'text' : 'password'"
-                id="{{ $name }}" 
-                name="{{ $name }}" 
+                id="{{ $name }}"
+                name="{{ $name }}"
                 value="{{ old($name, $value) }}"
                 @if($required) required @endif
                 @if($autofocus) autofocus @endif
-                class="auth-input pr-12 {{ $attributes->get('class') }}"
+                class="auth-input pe-12 {{ $attributes->get('class') }} @error($name) border-red-500 focus:border-red-500 focus:ring-red-200 @enderror"
                 placeholder="{{ $placeholder }}"
                 {{ $attributes->except(['class']) }}
             >
-            <button 
+            <button
                 type="button"
                 @click="show = !show"
-                class="absolute inset-y-0  ltr:right-0 rtl:left-0 ltr:pr-3 rtl:pl-3  flex items-center text-zinc-400 hover:text-white transition"
+                aria-label="{{ __('auth.toggle_password_visibility') }}"
+                class="absolute inset-y-0 end-0 flex items-center pe-3 transition {{ $toggleClass }}"
             >
                 <!-- Eye Icon (show password) -->
                 <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,17 +50,20 @@
             </button>
         </div>
     @else
-        <input 
-            type="{{ $type }}" 
-            id="{{ $name }}" 
-            name="{{ $name }}" 
+        <input
+            type="{{ $type }}"
+            id="{{ $name }}"
+            name="{{ $name }}"
             value="{{ old($name, $value) }}"
             @if($required) required @endif
             @if($autofocus) autofocus @endif
-            class="auth-input {{ $attributes->get('class') }}"
+            class="auth-input {{ $attributes->get('class') }} @error($name) border-red-500 focus:border-red-500 focus:ring-red-200 @enderror"
             placeholder="{{ $placeholder }}"
             {{ $attributes->except(['class']) }}
         >
     @endif
 
+    @error($name)
+        <p class="mt-1 text-sm {{ $errorClass }}">{{ $message }}</p>
+    @enderror
 </div>

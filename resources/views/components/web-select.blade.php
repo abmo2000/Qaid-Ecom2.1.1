@@ -7,14 +7,16 @@
     'placeholder' => 'Select an option',
     'required' => false,
     'value' => null,
+    'labelClass' => 'text-white',
+    'errorClass' => 'text-red-400',
 ])
 
 <div class="space-y-2">
     @if($label)
-        <label for="{{ $name }}" class="block text-white font-medium mb-2">
+        <label for="{{ $name }}" class="mb-2 block font-medium {{ $labelClass }}">
             {{ $label }}
             @if($required)
-                <span class="text-orange-500">*</span>
+                <span class="text-red-500">*</span>
             @endif
         </label>
     @endif
@@ -23,7 +25,7 @@
         name="{{ $name }}" 
         id="{{ $name }}"
         {{ $attributes->merge([
-            'class' => 'auth-input pr-12'
+            'class' => 'auth-input pe-12'
         ]) }}
         @if($required) required @endif
     >
@@ -38,4 +40,7 @@
             </option>
         @endforeach
     </select>
+    @error($name)
+        <p class="mt-1 text-sm {{ $errorClass }}">{{ $message }}</p>
+    @enderror
 </div>

@@ -6,7 +6,8 @@ return [
   'about' => 'About',
   'shop' => 'Shop',
   'contact' => 'Contact',
+  'terms' => 'Terms',
   'routine' => 'Routine',
-  'featured-products' => 'Featured Products',
+  'best-offers' => 'Best Offers',
   'concepts' => "Our Concepts",
 ];

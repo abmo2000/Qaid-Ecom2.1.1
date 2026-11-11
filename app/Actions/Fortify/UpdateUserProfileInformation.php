@@ -29,7 +29,16 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             ],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:255'],
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
+            'insta_account' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
+
+        $profileDetails = [
+            'phone' => $input['phone'] ?? $user->phone,
+            'address' => $input['address'] ?? $user->address,
+            'city_id' => array_key_exists('city_id', $input) ? $input['city_id'] : $user->city_id,
+            'insta_account' => array_key_exists('insta_account', $input) ? $input['insta_account'] : $user->insta_account,
+        ];
 
         if ($input['email'] !== $user->email &&
             $user instanceof MustVerifyEmail) {
@@ -38,8 +47,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->forceFill([
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'phone' => $input['phone'] ?? $user->phone,
-                'address' => $input['address'] ?? $user->address,
+                ...$profileDetails,
             ])->save();
         }
     }

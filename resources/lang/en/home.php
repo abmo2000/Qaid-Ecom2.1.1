@@ -13,6 +13,7 @@ Months of scientific research and testing have enabled us to develop the ideal f
 'about-products-section' => 'About Our Products',
 'discover-natura' => 'Discover Natura Capelli',
 'featured-products' => 'Featured Products',
+'view-all-offers' => 'View all offers',
 'discover-products' => 'Discover our Products',
 'we-support-your-choice' => 'We support your choice',
 

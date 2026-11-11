@@ -67,11 +67,15 @@
                 <a href="{{ route('contact') }}" class="nav-link">{{ trans('navbar.contact') }}</a>
                 <a href="{{ route('wholesale-sales') }}" class="nav-link">{{ trans('wholesale.title') }}</a>
 
-                @if(Request::is('/'))
-                    <a href="#fearured-products" @click.prevent="scrollToSection('fearured-products')" class="nav-link cursor-pointer">
-                        {{ trans('navbar.featured-products') }}
-                    </a>
-                @endif
+                <a href="{{ route('offers.index') }}"
+                    @class(['nav-link best-offers-nav-link inline-flex items-center gap-1.5', 'text-offer' => request()->routeIs('offers.*')])
+                    aria-label="{{ $maximumOfferDiscount > 0 ? __('offers.nav_link_discount', ['percent' => $maximumOfferDiscount]) : trans('navbar.best-offers') }}"
+                    @if(request()->routeIs('offers.*')) aria-current="page" @endif>
+                    <span>{{ trans('navbar.best-offers') }}</span>
+                    @if($maximumOfferDiscount > 0)
+                        <span class="offer-nav-badge" aria-hidden="true"></span>
+                    @endif
+                </a>
             </div>
 
             <!-- Actions -->
@@ -156,33 +160,6 @@
                                 x-transition:leave-end="opacity-0 translate-y-2 scale-95"
                                 class="absolute end-0 top-full z-[10000] mt-3 w-60 overflow-hidden rounded-2xl border border-[#d8b35a]/25 bg-white py-2 shadow-[0_28px_80px_rgba(13,27,42,.22)]"
                             >
-                                <a href="/admin" class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#f7f1e3] hover:text-[#0d1b2a]">
-                                    <i class="fas fa-tachometer-alt w-4 text-[#9b762f]"></i>
-                                    <span>Admin Dashboard</span>
-                                </a>
-
-                                <a href="/admin/orders" class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#f7f1e3] hover:text-[#0d1b2a]">
-                                    <i class="fas fa-clipboard-list w-4 text-[#9b762f]"></i>
-                                    <span>Orders</span>
-                                </a>
-
-                                <a href="/admin/customers" class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#f7f1e3] hover:text-[#0d1b2a]">
-                                    <i class="fas fa-users w-4 text-[#9b762f]"></i>
-                                    <span>Customers</span>
-                                </a>
-
-                                <a href="/admin/cities" class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#f7f1e3] hover:text-[#0d1b2a]">
-                                    <i class="fas fa-truck w-4 text-[#9b762f]"></i>
-                                    <span>Delivery Pricing</span>
-                                </a>
-
-                                <a href="/admin/products" class="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#f7f1e3] hover:text-[#0d1b2a]">
-                                    <i class="fas fa-box-open w-4 text-[#9b762f]"></i>
-                                    <span>Products</span>
-                                </a>
-
-                                <div class="my-1 border-t border-slate-200"></div>
-
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50">
@@ -287,22 +264,16 @@
             <a href="{{ route('home') }}" class="mobile-nav-link">{{ trans('navbar.home') }}</a>
             <a href="{{ route('shop') }}" class="mobile-nav-link">{{ trans('navbar.shop') }}</a>
             <a href="{{ route('contact') }}" class="mobile-nav-link">{{ trans('navbar.contact') }}</a>
-
-            @if(Request::is('/'))
-                <a href="#fearured-products" @click.prevent="scrollToSection('fearured-products')" class="mobile-nav-link">
-                    {{ trans('navbar.featured-products') }}
-                </a>
-            @endif
-
-            @auth
-                @if(auth()->user()->isAdmin())
-                    <a href="/admin" class="mobile-nav-link">Admin Dashboard</a>
-                    <a href="/admin/orders" class="mobile-nav-link">Orders</a>
-                    <a href="/admin/customers" class="mobile-nav-link">Customers</a>
-                    <a href="/admin/cities" class="mobile-nav-link">Delivery Pricing</a>
-                    <a href="/admin/products" class="mobile-nav-link">Products</a>
+            <a href="{{ route('wholesale-sales') }}" class="mobile-nav-link">{{ trans('wholesale.title') }}</a>
+            <a href="{{ route('offers.index') }}"
+                @class(['mobile-nav-link best-offers-mobile-nav-link flex-wrap gap-1.5', 'text-offer' => request()->routeIs('offers.*')])
+                aria-label="{{ $maximumOfferDiscount > 0 ? __('offers.nav_link_discount', ['percent' => $maximumOfferDiscount]) : trans('navbar.best-offers') }}"
+                @if(request()->routeIs('offers.*')) aria-current="page" @endif>
+                <span>{{ trans('navbar.best-offers') }}</span>
+                @if($maximumOfferDiscount > 0)
+                    <span class="offer-nav-badge" aria-hidden="true"></span>
                 @endif
-            @endauth
+            </a>
 
             @guest
                 <a href="{{ route('login') }}" class="mobile-nav-link">Login</a>

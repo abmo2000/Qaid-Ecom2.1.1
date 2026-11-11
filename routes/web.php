@@ -21,6 +21,7 @@ use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\TermsController;
 use App\Http\Controllers\Web\Auth\GoogleAuthController;
 use App\Http\Controllers\Web\WholesaleController;
+use App\Http\Controllers\Web\OffersController;
 
 Route::middleware(['locale'])->group(function(){
      Route::get('/', HomeController::class)->name('home');
@@ -34,6 +35,7 @@ Route::middleware(['locale'])->group(function(){
      Route::resource('routines' , RoutineController::class)->only('show' , 'index');
 
      Route::get('/shop' , [ShopController::class, 'index'])->name('shop');
+     Route::get('/offers', [OffersController::class, 'index'])->name('offers.index');
      Route::post('/customer-traffic', [CustomerTrafficController::class, 'store'])->middleware('auth')->name('customer.traffic.store');
      Route::get('api/products/{is_trial}' , ProductsApiCpntroller::class)->defaults('is_trial' , false);
      Route::get('api/packages' , PackagesApiController::class);
@@ -71,7 +73,7 @@ Route::get('queue', ArtisanController::class)->middleware('secure');
 Route::middleware('auth')->group(function () {
      Route::get('dashboard/orders/{order}/invoice', OrderInvoiceController::class)->name('dashboard.orders.invoice');
 
-     Route::middleware(App\Http\Middleware\EnsureCustomer::class)->group(function () {
+     Route::middleware(['locale', App\Http\Middleware\EnsureCustomer::class])->group(function () {
          Route::prefix('account')->name('account.')->group(function () {
              Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
              Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');

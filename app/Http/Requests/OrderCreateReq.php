@@ -24,27 +24,44 @@ class OrderCreateReq extends FormRequest
      */
     public function rules(): array
     {
-      
-        return [
+        $paymentMethods = ['cash_on_delivery', 'cash'];
+        if (config('checkout.instapay_enabled', false)) {
+            $paymentMethods[] = 'instapay';
+        }
+
+        $rules = [
             "name" => 'nullable|string|max:255',
             'email' => 'required|email',
             'phone' => 'required|string|min:8|max:30',
             'address' => 'nullable|string|max:255',
             'city_id' => 'required|exists:cities,id',
             'delivery_option' => 'sometimes|in:proceed,discuss',
-            'payment_method' => 'required|string',
-            'insta_account' => [Rule::requiredIf(fn() => $this->input('payment_method') === 'instapay') , 'nullable' ,'string' , 'max:50'],
-            'payment_proof' => [
-                Rule::requiredIf(fn() => $this->input('payment_method') === 'instapay'),
+            'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
+            'notes' => 'nullable|string|max:1000',
+        ];
+
+        if (config('checkout.instapay_enabled', false)) {
+            $rules['insta_account'] = [
+                Rule::requiredIf(fn () => $this->input('payment_method') === 'instapay'),
+                'nullable',
+                'string',
+                'max:50',
+            ];
+            $rules['payment_proof'] = [
+                Rule::requiredIf(fn () => $this->input('payment_method') === 'instapay'),
                 'nullable',
                 'file',
                 'image',
                 'mimes:jpeg,png,jpg,gif,webp',
                 'max:4096',
-            ],
-            'notes' => 'nullable|string|max:1000',
-            'coupon_code' => 'nullable|string|max:100',
-        ];
+            ];
+        }
+
+        if (config('checkout.coupons_enabled', false)) {
+            $rules['coupon_code'] = 'nullable|string|max:100';
+        }
+
+        return $rules;
     }
 
     protected function prepareForValidation()
@@ -55,8 +72,10 @@ class OrderCreateReq extends FormRequest
     public function messages()
     {
         return [
-            'phone.min' => 'Phone number must be at least 8 characters.',
-            'phone.max' => 'Phone number must not exceed 30 characters.',
+            'phone.min' => __('checkout.validation.phone_min'),
+            'phone.max' => __('checkout.validation.phone_max'),
+            'payment_method.in' => __('checkout.validation.payment_method_invalid'),
+            'payment_proof.required' => __('checkout.validation.payment_proof_required'),
         ];
     }
 
