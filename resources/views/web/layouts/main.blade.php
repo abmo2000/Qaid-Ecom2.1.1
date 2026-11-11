@@ -102,6 +102,7 @@
 
         @yield('content')
 
+        @unless(request()->routeIs('offers.*'))
         <div class="fixed bottom-5 right-5 z-[9999] flex flex-col items-center gap-[10px]" style="position: fixed; right: 20px; bottom: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <a
                 href="{{ $whatsappLink }}"
@@ -129,6 +130,7 @@
                 </a>
             @endif
         </div>
+        @endunless
 
         <x-flash-message></x-flash-message>
         <x-footer></x-footer>
