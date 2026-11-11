@@ -9,12 +9,11 @@ class CreatePackages extends CreateRecord
 {
     protected static string $resource = PackagesResource::class;
 
-
-         protected array $translations = [];
+    protected array $translations = [];
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-       
+
         // Extract translations
         $translations = [];
         foreach (['en', 'ar'] as $locale) {
@@ -23,13 +22,13 @@ class CreatePackages extends CreateRecord
                 unset($data[$locale]);
             }
         }
-        
+
         // Store translations separately to be handled after creation
         $this->translations = $translations;
-        
+
         return $data;
     }
-    
+
     protected function afterCreate(): void
     {
         // Save translations
@@ -39,12 +38,6 @@ class CreatePackages extends CreateRecord
             }
         }
 
-        $products = $this->form->getState()['products'] ?? [];
-        $this->record->products()->sync($products);
-
         $this->record->recalculateOriginalPrice();
     }
-
-
- 
 }

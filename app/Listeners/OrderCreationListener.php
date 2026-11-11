@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\AdminOrderNotification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomerOrderConfirmation;
-use App\Jobs\SendWhatsAppOrderConfirmation;
+use App\Jobs\SendOrderToQaidAutomation;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -34,17 +34,19 @@ class OrderCreationListener implements ShouldQueue
     public function handle(OrderCreated $event): void
     {
         try {
-            SendWhatsAppOrderConfirmation::dispatch(
+            SendOrderToQaidAutomation::dispatch(
                 $event->order,
-                $event->totalAmount,
                 $event->locale,
             );
         } catch (\Throwable $exception) {
-            Log::warning('WhatsApp order confirmation could not be queued.', [
+            Log::warning('QAID order automation could not be queued.', [
                 'order_id' => $event->order->id,
                 'error' => $exception->getMessage(),
             ]);
         }
+
+        // Direct Evolution sending is intentionally disabled while QAID automation is active.
+        // SendWhatsAppOrderConfirmation::dispatch($event->order, $event->totalAmount, $event->locale);
 
         Mail::to($event->order->customer->email)
             ->send(new CustomerOrderConfirmation($event->order, $event->items, $event->totalAmount));
