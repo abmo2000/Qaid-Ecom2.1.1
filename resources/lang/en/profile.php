@@ -19,7 +19,7 @@ return [
     'city' => 'City',
     'choose_city' => 'Choose a city',
     'address' => 'Street Address',
-    'instagram' => 'Instagram Account',
+    'instapay_account' => 'InstaPay Account',
     'save_changes' => 'Save Changes',
     'view_orders' => 'View Orders',
     'updated' => 'Your profile was updated successfully.',

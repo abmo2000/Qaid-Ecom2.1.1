@@ -98,12 +98,12 @@
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label for="insta_account" class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#0d1b2a]">{{ __('profile.instagram') }}</label>
+                    <label for="insta_account" class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#0d1b2a]">{{ __('profile.instapay_account') }}</label>
                     <input id="insta_account" name="insta_account" type="text" value="{{ old('insta_account', $user->insta_account) }}" autocomplete="off"
-                        aria-describedby="@error('insta_account', 'updateProfileInformation') instagram-error @enderror"
+                        aria-describedby="@error('insta_account', 'updateProfileInformation') instapay-error @enderror"
                         class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-start text-[#0d1b2a] outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#d8b35a] focus:ring-4 focus:ring-[#d8b35a]/20">
                     @error('insta_account', 'updateProfileInformation')
-                        <p id="instagram-error" class="mt-2 text-sm text-red-700">{{ $message }}</p>
+                        <p id="instapay-error" class="mt-2 text-sm text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
             </div>

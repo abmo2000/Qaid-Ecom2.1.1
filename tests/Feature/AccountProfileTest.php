@@ -28,6 +28,8 @@ class AccountProfileTest extends TestCase
             ->assertSee('account-page-body')
             ->assertSee(__('profile.personal_information'))
             ->assertSee(__('profile.contact_address'))
+            ->assertSee(__('profile.instapay_account'))
+            ->assertDontSee('Instagram Account')
             ->assertSee(__('profile.security'))
             ->assertSee('name="city_id"', false)
             ->assertSee('lg:grid-cols-[17rem_minmax(0,1fr)]', false)
@@ -56,6 +58,8 @@ class AccountProfileTest extends TestCase
             ->assertOk()
             ->assertSee('lang="ar" dir="rtl"', false)
             ->assertSee('المعلومات الشخصية')
+            ->assertSee('حساب إنستاباي')
+            ->assertDontSee('حساب إنستغرام')
             ->assertDontSee('profile.personal_information');
     }
 
@@ -101,7 +105,7 @@ class AccountProfileTest extends TestCase
                 'phone' => '+201234567890',
                 'address' => '12 Garden Street',
                 'city_id' => $city->id,
-                'insta_account' => '@qaid_customer',
+                'insta_account' => 'qaid.customer@instapay',
             ])
             ->assertRedirect()
             ->assertSessionHas('status', 'profile-information-updated');
@@ -116,7 +120,7 @@ class AccountProfileTest extends TestCase
             'phone' => '+201234567890',
             'address' => '12 Garden Street',
             'city_id' => $city->id,
-            'insta_account' => '@qaid_customer',
+            'insta_account' => 'qaid.customer@instapay',
         ]);
     }
 

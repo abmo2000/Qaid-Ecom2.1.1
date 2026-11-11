@@ -19,7 +19,7 @@ return [
     'city' => 'المدينة',
     'choose_city' => 'اختر المدينة',
     'address' => 'عنوان الشارع',
-    'instagram' => 'حساب إنستغرام',
+    'instapay_account' => 'حساب إنستاباي',
     'save_changes' => 'حفظ التغييرات',
     'view_orders' => 'عرض الطلبات',
     'updated' => 'تم تحديث ملفك الشخصي بنجاح.',
