@@ -9,6 +9,7 @@ return [
     'subtitle' => 'Shop current discounts on products ready to ship.',
     'max_discount_label' => 'Maximum discount',
     'up_to_prefix' => 'UP TO',
+    'nav_link_discount' => 'Best Offers - up to :percent% off',
     'up_to_suffix' => 'OFF',
     'sale_badge' => 'SALE',
     'no_active_discount' => 'Fresh offers are coming soon.',

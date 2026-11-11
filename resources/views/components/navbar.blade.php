@@ -69,11 +69,12 @@
 
                 <a href="{{ route('offers.index') }}"
                     @class(['nav-link best-offers-nav-link inline-flex items-center gap-1.5', 'text-offer' => request()->routeIs('offers.*')])
+                    aria-label="{{ $maximumOfferDiscount > 0 ? __('offers.nav_link_discount', ['percent' => $maximumOfferDiscount]) : trans('navbar.best-offers') }}"
                     @if(request()->routeIs('offers.*')) aria-current="page" @endif>
                     <span>{{ trans('navbar.best-offers') }}</span>
-                    <span class="offer-nav-badge inline-flex shrink-0 items-center rounded-full bg-offer px-2 py-1 text-[9px] font-black uppercase leading-none tracking-[0.08em] text-white">
-                        {{ $maximumOfferDiscount > 0 ? __('offers.up_to_short', ['discount' => $maximumOfferDiscount]) : __('offers.sale_badge') }}
-                    </span>
+                    @if($maximumOfferDiscount > 0)
+                        <span class="offer-nav-badge" aria-hidden="true"></span>
+                    @endif
                 </a>
             </div>
 
@@ -265,12 +266,13 @@
             <a href="{{ route('contact') }}" class="mobile-nav-link">{{ trans('navbar.contact') }}</a>
             <a href="{{ route('wholesale-sales') }}" class="mobile-nav-link">{{ trans('wholesale.title') }}</a>
             <a href="{{ route('offers.index') }}"
-                @class(['mobile-nav-link flex-wrap', 'text-offer' => request()->routeIs('offers.*')])
+                @class(['mobile-nav-link best-offers-mobile-nav-link flex-wrap gap-1.5', 'text-offer' => request()->routeIs('offers.*')])
+                aria-label="{{ $maximumOfferDiscount > 0 ? __('offers.nav_link_discount', ['percent' => $maximumOfferDiscount]) : trans('navbar.best-offers') }}"
                 @if(request()->routeIs('offers.*')) aria-current="page" @endif>
                 <span>{{ trans('navbar.best-offers') }}</span>
-                <span class="offer-nav-badge ms-auto inline-flex shrink-0 items-center rounded-full bg-offer px-2 py-1 text-[9px] font-black uppercase leading-none tracking-[0.08em] text-white">
-                    {{ $maximumOfferDiscount > 0 ? __('offers.up_to_short', ['discount' => $maximumOfferDiscount]) : __('offers.sale_badge') }}
-                </span>
+                @if($maximumOfferDiscount > 0)
+                    <span class="offer-nav-badge" aria-hidden="true"></span>
+                @endif
             </a>
 
             @guest

@@ -145,8 +145,22 @@ class OffersPageTest extends TestCase
             ->assertSee('أفضل العروض')
             ->assertSee('خصم يصل إلى')
             ->assertSee('<bdi dir="ltr">40٪</bdi>', false)
+            ->assertSee('aria-label="أفضل العروض - خصم يصل إلى 40٪"', false)
+            ->assertSee('class="offer-nav-badge" aria-hidden="true"', false)
             ->assertSee('عرض واحد')
             ->assertDontSee('offers.title');
+    }
+
+    public function test_best_offers_navigation_dot_has_an_english_accessible_label(): void
+    {
+        $this->createProduct('English offer', 1000, 440);
+
+        $this->withSession(['locale' => 'en'])
+            ->get(route('offers.index'))
+            ->assertOk()
+            ->assertSee('aria-label="Best Offers - up to 56% off"', false)
+            ->assertSee('class="offer-nav-badge" aria-hidden="true"', false)
+            ->assertDontSee('offers.up_to_short');
     }
 
     public function test_arabic_offer_counts_and_missing_category_translation_are_localized(): void
@@ -259,7 +273,8 @@ class OffersPageTest extends TestCase
         $this->get(route('offers.index'))
             ->assertOk()
             ->assertSee(__('offers.empty_title'))
-            ->assertSee(route('shop'));
+            ->assertSee(route('shop'))
+            ->assertDontSee('offer-nav-badge');
 
         $this->get(route('offers.index', ['brands' => [999999]]))
             ->assertOk()

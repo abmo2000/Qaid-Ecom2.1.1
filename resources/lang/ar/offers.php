@@ -9,6 +9,7 @@ return [
     'subtitle' => 'تسوق الخصومات الحالية على المنتجات الجاهزة للشحن.',
     'max_discount_label' => 'أعلى خصم حالي',
     'up_to_prefix' => 'خصم يصل إلى',
+    'nav_link_discount' => 'أفضل العروض - خصم يصل إلى :percent٪',
     'up_to_suffix' => '',
     'sale_badge' => 'تخفيضات',
     'no_active_discount' => 'ترقبوا عروضنا القادمة.',
